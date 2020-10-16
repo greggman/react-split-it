@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="a react adjustable splitter"
+    />
+
+    <meta name="keywords" content="react javascript splitter">
+    <meta name="thumbnail" content="https://greggman.github.io/react-split-it/card.png">
+
+    <meta property="og:title" content="react-split-it">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://greggman.github.io/react-split-it/card.png">
+    <meta property="og:description" content="a react adjustable splitter">
+    <meta property="og:url" content="https://greggman.github.io/">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@greggman">
+    <meta name="twitter:creator" content="@greggman">
+    <meta name="twitter:domain" content="greggman.github.io">
+    <meta name="twitter:title" content="react-split-it">
+    <meta name="twitter:url" content="https://greggman.github.io/react-split-it">
+    <meta name="twitter:description" content="a react adjustable splitter">
+    <meta name="twitter:image:src" content="https://greggman.github.io/react-split-it/card.png">
+
+    <title>react-split-it</title>
+  </head>
+  <body>
+    <section>
+      <h2>Basic</h2>
+      <pre class="prettyprint">
+function SomeComponent(props) {
+  return (
+    <div className="outer">
+      <Split>
+        <div>pane one</div>
+        <div>pane two</div>
+        <div>pane three</div>
+      </Split>
+    </div>
+  );
+}
+      </pre>
+      <div id="simple"></div>
+    </section>
+  </body>
+<script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/prop-types@15.7.2/prop-types.min.js"></script>
+<script type="module">
+import Split from './src/split.js';
+</script>
+
+<script type="text/babel">
+
+function SomeComponent(props) {
+  return (
+    <div className="outer">
+      <Split>
+        <div>pane one</div>
+        <div>pane two</div>
+        <div>pane three</div>
+      </Split>
+    </div>
+  );
+}
+
+ReactDOM.render(<SomeComponent />, document.querySelector('#simple'));
+
+</script>
+</html>
