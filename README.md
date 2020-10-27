@@ -12,7 +12,7 @@ Yet another react splitter component.
 npm install react-split-it
 ```
 
-```
+```javascript
 import Split as 'react-split-it';
 
 function SomeComponent(props) {
@@ -31,7 +31,7 @@ function SomeComponent(props) {
 
 Example
 
-```
+```javascript
 import Split as 'react-split-it';
 
 function SomeComponent(props) {
@@ -49,7 +49,7 @@ function SomeComponent(props) {
 
 See [here](https://greggman.github.io/react-split-it/#simple)
 
-** Important!!! **
+**Important!!!**
 
 You need to make sure that `.outer` specifies some size
 large enough make space for the things inside `<Split>`.
@@ -65,8 +65,8 @@ almost nothing is hard coded.
 
 Given the example above this is what your actual HTML elements will look like
 
-```
-<div class="outer>
+```html
+<div class="outer">
   <div class="split split-horizontal">
     <div style="flex-basis: 33.33333333%">
       <div>pane one</div>
@@ -151,7 +151,7 @@ You can pass in initial sizes but after that it's on it's own.
 
 But let's say you have dynamic panes as in
 
-```
+```javascript
 <Split>
   {panes.map(p => <SomePane {...p}/>)}
 </Split>
@@ -261,7 +261,7 @@ with the following properties.
 Given this your function should return the new sizes
 of all the panes. As the simplest example
 
-```
+```javascript
 function badComputeSizes({
   startSizes,
   prevPaneNdx,
