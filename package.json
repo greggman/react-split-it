@@ -5,10 +5,22 @@
   "main": "dist/react-split-it.umd.js",
   "module": "dist/react-split-it.esm.js",
   "source": "src/split.js",
-  "repository": "https://github.com/greggman/react-split-it",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/greggman/react-split-it"
+  },  
+  "bugs": {
+    "url": "https://github.com/greggman/react-split-it/issues"
+  },
   "author": "Gregg Tavares <github@greggman.com>",
   "homepage": "https://greggman.github.io/react-split-it/",
   "license": "MIT",
+  "keywords": [
+    "react",
+    "react-component",
+    "split-pane",
+    "react-split-it"
+  ],
   "dependencies": {
     "prop-types": "^15.7.2"
   },
