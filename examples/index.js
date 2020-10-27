@@ -1,4 +1,3 @@
-const wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 const toClass = s => `${s[0].toUpperCase()}${s.substr(1).replace(/-(.)/g, (m, m1) => m1.toUpperCase())}`;
 
 {
