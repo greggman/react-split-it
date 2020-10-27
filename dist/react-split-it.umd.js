@@ -628,7 +628,7 @@
         var numChildren = React__default['default'].Children.count(children);
 
         if (sizes.length !== numChildren) {
-          setTimeout(this.recomputeSizes);
+          this.recomputeSizes();
         }
       }
     }, {

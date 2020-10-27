@@ -620,7 +620,7 @@ var Split = /*#__PURE__*/function (_React$Component2) {
       var numChildren = React.Children.count(children);
 
       if (sizes.length !== numChildren) {
-        setTimeout(this.recomputeSizes);
+        this.recomputeSizes();
       }
     }
   }, {
