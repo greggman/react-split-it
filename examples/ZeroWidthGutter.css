@@ -1,0 +1,15 @@
+.zero-width-gutter {
+  height: 100px;
+}
+.zero-width-gutter .gutter {
+  position: relative;
+}
+.zero-width-gutter .gutter-horizontal:before {
+  position: absolute;
+  left: -3px;
+  top: 0;
+  width: 6px;
+  height: 100%;
+  content: " ";
+  z-index: 2;
+}

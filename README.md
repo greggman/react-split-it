@@ -1,3 +1,5 @@
+<img src="https://greggman.github.io/react-split-it/resources/logo.svg" style="height: 200px;">
+
 # react-split-it
 
 Yet another react splitter component.
@@ -45,12 +47,19 @@ function SomeComponent(props) {
 }
 ```
 
+See [here](https://greggman.github.io/react-split-it/#simple)
+
+** Important!!! **
+
 You need to make sure that `.outer` specifies some size
 large enough make space for the things inside `<Split>`.
 And it's up to you to make sure the contents of each
 pane expand to fill their container.
 
-See [here](https://greggman.github.io/react-split-it/#simple)
+Further, you must supply the your own CSS. The goal of
+react-split-it is to do as little as possible and pass
+on the rest to you. That way it's more flexible since
+almost nothing is hard coded.
 
 ## How it works
 
@@ -58,16 +67,16 @@ Given the example above this is what your actual HTML elements will look like
 
 ```
 <div class="outer>
-  <div class="split">
-    <div style="width: calc(33%-7px)">
+  <div class="split split-horizontal">
+    <div style="flex-basis: 33.33333333%">
       <div>pane one</div>
     </div>
-    <div class="gutter gutter-horizontal"></div>
-    <div style="width: calc(33%-7px)">
+    <div class="gutter gutter-horizontal" style="flex-basis: 10px"></div>
+    <div style="flex-basis: 33.33333333%">
       <div>pane two</div>
     </div>
-    <div class="gutter gutter-horizontal"></div>
-    <div style="width: calc(33%-6px)">
+    <div class="gutter gutter-horizontal" style="flex-basis: 10px"></div>
+    <div style="flex-basis: 33.33333333%">
       <div>pane three</div>
     </div>
   </div>
@@ -77,10 +86,63 @@ Given the example above this is what your actual HTML elements will look like
 If you click and drag on the first gutter it will adjust
 the percentages in the wrappers to either size. The reason to use percentages is because if the window is resizes the elements will do the correct thing. No need run any code.
 
-The reason for the wrappers (vs split.js) react can't
+The reason for the wrappers (vs split.js) is react can't
 set the style of children without their cooperation so
-it react-split-it makes its own children, the wrappers,
-that it can manipulate
+in react-split-it makes its own children, the wrappers,
+that it can manipulate.
+
+## Props
+
+* `direction` (default: 'horizontal')
+
+  Can be 'horizontal' or 'vertical'
+
+* `sizes` (default: 1 / number-of-panes)
+
+  Sizes are in normalized values. In other words they should add up to 1.0.
+  By default they are copied to local state and only used at creation time.
+  If you want to be able to change them after creation see `onSetSizes`
+
+* `minSize` (default: 10)
+
+  The minimum size of each pane in CSS pixels
+
+* `gutterSize` (default: 10)
+
+  The size of gutters. Currently all gutters must be the same size
+  and they must be specified as a number of CSS pixels.
+
+* `className` (default: 'split')
+
+  The base class name to use for the outer most div. By default it will be 
+  `<div class="split split-<direction>">...`.
+
+* `gutterClassName` (default: 'gutter')
+
+  The base class name to use for the gutters. By default the gutter will
+  have `gutter`, `gutter-<direction>`, and `gutter-dragging` if being dragged.
+
+* `paneClassName` (default: 'pane')
+
+  The class name to use for each pane
+
+* `onSetSizes` (default: undefined)
+
+  This is a function you supply if you want to be responsible for storing
+  the state of the sizes. Anytime react-split-it needs to store new sizes
+  it will call `onSetSize` with an array of normalized size numbers.
+
+  If you supply this function then whatever values are sent to `onSetSize`
+  should in general be passed back as props.
+
+  [See this example](https://greggman.github.io/react-split-it/#add-remove-panes-managed)
+  and [this section](#Handling-adding-and-removing-panes-and-or-recording-sizes).
+
+* `computeNewSizesFn` (default: undefined)
+
+  This is a function called while dragging a gutter to compute new sizes.
+
+  see [this section](#Changing-behavior)
 
 ## Handling adding and removing panes and/or recording sizes
 
@@ -139,33 +201,7 @@ Or the 3rd element?
 
 So, if you want to be able to tell react-split-it what happened you're required
 to store the state of the sizes by providing an `onSetSize` function as a prop.
-Example:
-
-```
-class Outer extends React.Component {
-  constructor (props) {
-    super(props);
-    const panes = ['one', 'two', 'three'];
-    const sizes = panes.map(() => 1 / panes.length);
-    this.state = {
-      panes,
-      sizes,
-    };
-  }
-  setSizes = (sizes) => {
-    this.setState({sizes});
-  }
-  render() {
-    return (
-      <div className="outer">
-        <Split sizes={sizes} onSetSize={setSizes}>
-          {panes.map(p => <SomePane {...p}/>)}
-        </Split>
-      </div>
-    );
-  }
-}
-```
+[See this example](https://greggman.github.io/react-split-it/#add-remove-panes-managed).
 
 Now since you are in charge of the sizes you know if you delete `pane[2]`
 then you should also delete `sizes[2]`.
@@ -188,8 +224,7 @@ As it is if you have a split like this
 
 If you drag `A` to the right it will stop at `B`.
 
-You can change this by providing a function `computeNewSizesFn` as a prop. The function you pass in
-will be called to compute the sizes off all the panes
+You can change this by providing a function `computeNewSizesFn` as a prop. The function you pass in will be called to compute the sizes off all the panes
 when a spitter is dragged. It is passed an object
 with the following properties.
 
@@ -199,26 +234,11 @@ with the following properties.
   These are in normalized values. In other words each value is a number between 0 and 1 and they should all add up to 1. In a 3 pane split by default this
   would be an array of `[0.333, 0.333, 0.333]`
 
-* `currentSizes`: [number]
-
-  The current sizes of each pane. In other words,
-  whatever you returned last time.
-
 * `prevPaneNdx`: integer
 
-  In index of the pane before the spitter being dragged.
+  The index of the pane before the spitter being dragged.
   In other words if you were dragging `B` in the diagram
   above this would be 1.
-
-* `gutterReservedSizesPX`: [number]
-
-  The size of that will be reserved for gutters for each pane. For example
-  if there are 2 panes and `gutterSize` is 10 then each pane's wrapper
-  will have its size set to `calc(50% - 5px)` and so `gutterReservedSizesPX`
-  would be `[5, 5]`. If there are 3 panes then it would be `[7, 6, 7]`
-  because we need to reserve 20px for the two 10px splitters.
-
-  You need this to compute the correct percent for enforcing a minimum size.
 
 * `minSizePX`: integer
 
@@ -229,10 +249,14 @@ with the following properties.
   The amount the gutter has been dragged in CSS pixels
   since the start of dragging
 
-* `outerSizePX`: number
+* `innerSizePX`: number
 
   The size of the space to work in. In other words
-  the size of `outer` in the example above.
+  the size of `outer` in the example above minus
+  `gutterSize * numPanes - 1`. In other words if there are 3
+  pane then there are 2 gutters. If the space of outer
+  is 100px then subtracting the space for the 2 gutters
+  means `innerSizePX` will be 80.
 
 Given this your function should return the new sizes
 of all the panes. As the simplest example
@@ -240,19 +264,17 @@ of all the panes. As the simplest example
 ```
 function badComputeSizes({
   startSizes,
-  currentSizes,
   prevPaneNdx,
-  gutterReservedSizesPX,
   minSizePX,
   deltaPX,
-  outerSizePX,
+  innerSizePX,
 }) {
-  const deltaPercent = deltaPX / outerSizePX;
+  const deltaPercent = deltaPX / innerSizePX;
   return [
-    ...currentSizes.slice(0, prevPaneNdx),
+    ...startSizes.slice(0, prevPaneNdx),
     startSizes[prevPaneNdx    ] + deltaPercent,
     startSizes[prevPaneNdx + 1] - deltaPercent,
-    ...currentSizes.slice(prevPaneNdx + 2, currentSizes.length),
+    ...startSizes.slice(prevPaneNdx + 2, startSizes.length),
  ];
 }
 ```
@@ -263,14 +285,17 @@ the pane before the spitter and subtracts it from the pane after
 the splitter. If you try it you'll see it works!
 
 Why it's `bad`. It doesn't check that we don't make any size less then 0
-and it also doesn't check we don't make it less than `minSize`.
+and it also doesn't check we don't make it less than `minSize` but it's
+the simplest example.
 
-## Why
+My hope is you should be able to implement pushing the other gutters
+but I have not spent any time trying.
+
+## Why react-split-it?
 
 Because all the others were broken for me.
 
-`react-split` fails if you add or remove children because it's not actually a react aware solution. It's just a wrapper
-around split.js which inserts its own elements which
+`react-split` fails if you add or remove children because it's not actually a react aware solution. It's just a wrapper around split.js which inserts its own elements which
 are not part of the react virtual DOM. When react re-creates the elements it's managing the 2 get out of sync.
 
 `react-split-pane` didn't do what I want. I want that

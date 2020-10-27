@@ -1,0 +1,93 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: monospace;
+}
+
+pre {
+  overflow: auto;
+  max-height: 20em;
+}
+.hljs {
+  background: #eee;
+}
+
+#stuff {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.head {
+  display: flex;
+  align-items: center;
+}
+.head h1 {
+  font-size: xxx-large;
+}
+.non-section {
+  padding: 1em;
+  margin: 2em;
+}
+
+section {
+  border: 1px solid black;
+  padding: 1em;
+  margin: 2em;
+  position: relative;
+}
+section:before {
+  content: attr(data-caption);
+  background: white;
+  padding: 0 1em 0 1em;
+  position: absolute;
+  top: -0.75em;
+}
+
+.content {
+  background: lemonchiffon;
+  width: 100%;
+  height: 100%;
+}
+
+.r { background: red; }
+.o { background: orange; }
+.y { background: yellow; }
+.g { background: green; }
+.b { background: blue; }
+.i { background: indigo; }
+.v { background: violet; }
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #333;
+    color: #EEE;
+  }
+  a {
+    color: lightseagreen;
+  }
+  section {
+    border-color: #EEE;
+  }
+  section:before {
+    background: #333;
+  }
+  .content {
+    background: #555;
+  }
+  .hljs {
+    background: #222;
+  }
+  .r { background: darkred; }
+  .o { background: #654 }
+  .y { background: #863; }
+  .g { background: darkgreen; }
+  .b { background: darkblue; }
+  .i { background: darkmagenta; }
+  .v { background: darkviolet; }
+}

@@ -11,13 +11,14 @@
     />
 
     <meta name="keywords" content="react javascript splitter">
-    <meta name="thumbnail" content="https://greggman.github.io/react-split-it/card.png">
+    <meta name="thumbnail" content="https://greggman.github.io/react-split-it/resources/logo32.png">
+    <link rel="apple-touch-icon" href="https://greggman.github.io/react-split-it/resources/logo192.png" />
 
     <meta property="og:title" content="react-split-it">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://greggman.github.io/react-split-it/card.png">
+    <meta property="og:image" content="https://greggman.github.io/react-split-it/resources/logo512.png">
     <meta property="og:description" content="a react adjustable splitter">
-    <meta property="og:url" content="https://greggman.github.io/">
+    <meta property="og:url" content="https://greggman.github.io/react-split-it/">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@greggman">
@@ -26,51 +27,50 @@
     <meta name="twitter:title" content="react-split-it">
     <meta name="twitter:url" content="https://greggman.github.io/react-split-it">
     <meta name="twitter:description" content="a react adjustable splitter">
-    <meta name="twitter:image:src" content="https://greggman.github.io/react-split-it/card.png">
+    <meta name="twitter:image:src" content="https://greggman.github.io/react-split-it/resources/logo512.png">
+
+    <link
+      rel="stylesheet"
+      media="screen and (prefers-color-scheme: light)"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/tomorrow.min.css"
+    >
+    <link
+      rel="stylesheet"
+      media="screen and (prefers-color-scheme: dark)"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/styles/tomorrow-night-bright.min.css"
+    >
+
+    <link href="examples/example-split.css" rel="stylesheet">
+    <link href="examples/scrollbars.css" rel="stylesheet">
+    <link href="examples/index.css" rel="stylesheet">
 
     <title>react-split-it</title>
   </head>
   <body>
-    <section>
-      <h2>Basic</h2>
-      <pre class="prettyprint">
-function SomeComponent(props) {
-  return (
-    <div className="outer">
-      <Split>
-        <div>pane one</div>
-        <div>pane two</div>
-        <div>pane three</div>
-      </Split>
+    <div id="stuff">
+      <div class="non-section head">
+        <img src="resources/logo.svg" style="height: 200px;">
+        <h1>react-split-it</h1>
+      </div>
+      <div class="non-section">
+        <a href="https://greggman.github.io/react-split-it">Click here for documentation</a>
+      </div>
+      <section id="example-css" data-caption="The minimal css required" data-type="css"></section>
+      <section id="simple" data-caption="Simple Horizontal Split"></section>
+      <section id="simple-vertical" data-caption="Simple Vertical Split"></section>
+      <section id="nested" data-caption="Nested"></section>
+      <section id="zero-width-gutter" data-caption="Zero Width Gutter"></section>
+      <section id="zero-height-gutter-vertical" data-caption="Zero Height Gutter Vertical"></section>
+      <section id="add-remove-panes" data-caption="Add and Remove Panes (auto)"></section>
+      <section id="add-remove-panes-managed" data-caption="Add and Remove Panes (managed)"></section>
     </div>
-  );
-}
-      </pre>
-      <div id="simple"></div>
-    </section>
   </body>
 <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
-<script src="https://unpkg.com/prop-types@15.7.2/prop-types.min.js"></script>
-<script type="module">
-import Split from './src/split.js';
-</script>
-
-<script type="text/babel">
-
-function SomeComponent(props) {
-  return (
-    <div className="outer">
-      <Split>
-        <div>pane one</div>
-        <div>pane two</div>
-        <div>pane three</div>
-      </Split>
-    </div>
-  );
-}
-
-ReactDOM.render(<SomeComponent />, document.querySelector('#simple'));
-
-</script>
+<script src="https://unpkg.com/prop-types@15.7.2/prop-types.min.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.12.4/babel.js" crossorigin></script>
+<script src="dist/react-split-it.umd.js" crossorigin></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.2/highlight.min.js"></script>
+<script src="./examples/scrollbars.js"></script>
+<script type="module" src="./examples/index.js"></script>
 </html>

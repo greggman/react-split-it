@@ -1,8 +1,10 @@
 import React from 'react';
-import Split from './split.js';
-import {makeABGenerator} from './utils.js';
+import Split from 'react-split-it';
+import './example-split.css';
+import './AddRemovePanesManaged.css';
 
-const genName = makeABGenerator();
+let id = 0;
+const genName = _ => `pane${id++}`;
 
 export default class AddRemovePanesManaged extends React.Component {
   constructor(props) {
@@ -50,14 +52,14 @@ export default class AddRemovePanesManaged extends React.Component {
     const {panes} = this.state;
     return (
       <div>
-        <div className="add-remove-panes">
+        <div className="add-remove-panes-managed">
           <Split
             sizes={panes.map(p => p.size)}
             onSetSizes={this.setSizes}
           >
             {
               panes.map((pane, i) => (
-                <div className="pane" key={pane.name}>
+                <div className="content" key={pane.name}>
                   {pane.name}
                   <div className="buttons">
                     <button onClick={_ => this.addPane(i)}>⊕</button>

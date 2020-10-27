@@ -1,34 +1,37 @@
 {
   "name": "react-split-it",
-  "version": "0.1.0",
-  "private": true,
+  "description": "splitter for react",
+  "version": "1.0.0",
+  "main": "dist/react-split-it.umd.js",
+  "module": "dist/react-split-it.esm.js",
+  "source": "src/split.js",
+  "repository": "https://github.com/greggman/react-split-it",
+  "author": "Gregg Tavares <github@greggman.com>",
+  "homepage": "https://greggman.github.io/react-split-it/",
+  "license": "MIT",
   "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.5.0",
-    "@testing-library/user-event": "^7.2.1",
-    "react": "^16.14.0",
-    "react-dom": "^16.14.0",
-    "react-scripts": "3.4.3"
+    "prop-types": "^15.7.2"
   },
+  "peerDependencies": {
+    "react": ">= 16.0.0"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "prepublish": "rollup -c",
+    "build": "rollup -c",
+    "watch": "rollup -cw"
   },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+  "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-react": "^7.12.1",
+    "rollup": "^2.32.1",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0"
   }
 }

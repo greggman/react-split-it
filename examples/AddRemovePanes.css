@@ -1,0 +1,22 @@
+.add-remove-panes {
+  height: 100px;
+}
+
+.add-remove-panes .pane .buttons {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+}
+.add-remove-panes .pane button {
+  border: none;
+  outline: none;
+  padding: 0;
+  user-select: none;
+  background: transparent;
+}
+.add-remove-panes .pane button:hover {
+  color: red;
+  cursor: pointer;
+}

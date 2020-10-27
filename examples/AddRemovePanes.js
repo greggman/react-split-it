@@ -1,8 +1,10 @@
 import React from 'react';
-import Split from './split.js';
-import {makeABGenerator} from './utils.js';
+import Split from 'react-split-it';
+import './example-split.css';
+import './AddRemovePanes.css';
 
-const genName = makeABGenerator();
+let id = 0;
+const genName = _ => `pane${id++}`;
 
 export default class AddRemovePanes extends React.Component {
   constructor(props) {
@@ -30,9 +32,9 @@ export default class AddRemovePanes extends React.Component {
           <Split>
           {
             panes.map((pane, i) => (
-              <div className="pane" key={pane}>
+              <div className="content" key={pane}>
                 {pane}
-                <div class="buttons">
+                <div className="buttons">
                   <button
                     className="delete"
                     onClick={() => this.deletePane(i)}

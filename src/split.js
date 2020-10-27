@@ -1,25 +1,6 @@
+import PropTypes from 'prop-types';
 import React from 'react';
-
-const defaultGutterSize = 10;
-const defaultDirection = 'horizontal';
-const defaultMinSize = 10;
-
-function distribute(items, buckets) {
-  const base = items / buckets | 0;
-  const extra = items % buckets;
-  const array = new Array(buckets).fill(base);
-  if (extra === 0) {
-    return array;
-  } else if (extra <= buckets / 2 | 0) {
-    const leap = buckets / extra | 0;
-    const halfLeap = leap / 2 | 0; 
-    return array.map((v, i) => v + ((i % leap === halfLeap) ? 1 : 0));
-  } else {
-    const leap = buckets / (buckets - extra) | 0;
-    const halfLeap = leap / 2 | 0;
-    return array.map((v, i) => v + (1 - (i % leap === halfLeap ? 1 : 0)));
-  }
-}
+import {classNames} from './css-utils';
 
 function normalizeSizes(sizes) {
   const totalSize = sizes.reduce((sum, v) => sum + v, 0);
@@ -59,10 +40,6 @@ const getDirectionProps = direction => (direction === 'horizontal')
       position: 'left',
       positionEnd: 'right',
       clientSize: 'clientWidth',
-      style: {
-        width: '100%',
-        display: 'flex',
-      },
     }
   : {
       dimension: 'height',
@@ -70,50 +47,29 @@ const getDirectionProps = direction => (direction === 'horizontal')
       position: 'top',
       positionEnd: 'bottom',
       clientSize: 'clientHeight',
-      style: { /*height: '100%'*/ },
     };
 
 function computeNewSizes({
   startSizes,
-  currentSizes,
   prevPaneNdx,
-  gutterReservedSizesPX,
   minSizePX,
   deltaPX,
-  outerSizePX,
+  innerSizePX,
 }) {
   const nextPaneNdx = prevPaneNdx + 1;
-  const prevPaneStartSizePX = Math.ceil(startSizes[prevPaneNdx] * outerSizePX) - gutterReservedSizesPX[prevPaneNdx];
-  const nextPaneStartSizePX = Math.ceil(startSizes[nextPaneNdx] * outerSizePX) - gutterReservedSizesPX[nextPaneNdx];
-  const spaceUsedByBothElementsPX = prevPaneStartSizePX + nextPaneStartSizePX;
+  const pairSize = startSizes[prevPaneNdx] + startSizes[nextPaneNdx];
+  const pairSizePX = pairSize * innerSizePX;
+  const prevPaneStartSizePX = startSizes[prevPaneNdx] * pairSizePX / pairSize;
   const prevPaneNewSizePX = Math.min(
     Math.max(minSizePX, prevPaneStartSizePX + deltaPX),
-    spaceUsedByBothElementsPX - minSizePX);
-  const nextPaneNewSizePX = spaceUsedByBothElementsPX - prevPaneNewSizePX;
+    pairSizePX - minSizePX);
+  const nextPaneNewSizePX = pairSizePX - prevPaneNewSizePX;
   const newSizes = [
-    ...currentSizes.slice(0, prevPaneNdx),
-    (prevPaneNewSizePX + gutterReservedSizesPX[prevPaneNdx]) / outerSizePX,
-    (nextPaneNewSizePX + gutterReservedSizesPX[nextPaneNdx]) / outerSizePX,
-    ...currentSizes.slice(prevPaneNdx + 2, currentSizes.length),
+    ...startSizes.slice(0, prevPaneNdx),
+    prevPaneNewSizePX / innerSizePX,
+    nextPaneNewSizePX / innerSizePX,
+    ...startSizes.slice(prevPaneNdx + 2, startSizes.length),
   ];
-
-  /*
-  const availableSpacePX = outerSizePX - totalGutterSizePX;
-  const info = `
-  gutterReservedSizes: ${gutterReservedSizesPX}
-  availableSpacePX: ${availableSpacePX}
-  prevStartSizePX: ${prevPaneStartSizePX}
-  nextStartSizePX: ${nextPaneStartSizePX}
-  spaceUsedByBothElementsPX: ${spaceUsedByBothElementsPX}
-  prevNewSizePX: ${prevPaneNewSizePX}
-  nextNewSizePX: ${nextPaneNewSizePX}
-  sizes: ${currentSizes}
-  newSizes: ${newSizes}
-  `;
-  const infoElem = document.querySelector('#info');
-  infoElem.textContent = info;
-  */
-
   return newSizes;
 }
 
@@ -131,7 +87,7 @@ class Gutter extends React.Component {
   componentDidMount() {
     // There's no way in React 16 to add passive false event listeners
     // which means there is no way to drag a splitter and prevent mobile browsers
-    // from scrolling
+    // from scrolling without doing this manually.
     const elem = this.elementRef.current;
     elem.addEventListener('mousedown', this.handleMouseDownAndTouchStart, {passive: false});
     elem.addEventListener('touchstart', this.handleMouseDownAndTouchStart, {passive: false});
@@ -142,24 +98,28 @@ class Gutter extends React.Component {
     elem.removeEventListener('touchstart', this.handleMouseDownAndTouchStart);
   }
   render() {
-    const {direction, dragging, current, style} = this.props;
+    const {direction, dragging, current, style, gutterClassName} = this.props;
     return (
       <div
         ref={this.elementRef}
-        className={`gutter gutter-${direction} ${dragging && current ? 'gutter-dragging' : ''}`}
+        className={`${gutterClassName} ${gutterClassName}-${direction} ${dragging && current ? `${gutterClassName}-dragging` : ''}`}
         style={style}
       />
     );
   }
 }
 
-export default class GManSplit extends React.Component {
+export default class Split extends React.Component {
   constructor(props) {
     super(props);
-    const numPanes = React.Children.count(props.children);
+    const {
+      children,
+      sizes,
+    } = props;
+    const numPanes = React.Children.count(children);
     const size = 1 / numPanes;
     this.state = {
-      sizes: new Array(numPanes).fill(size),
+      sizes: sizes || new Array(numPanes).fill(size), 
     };
     this.elementRef = React.createRef();
   }
@@ -176,9 +136,9 @@ export default class GManSplit extends React.Component {
   handleMouseAndTouchMove = (e) => {
     stopMobileBrowserFromScrolling(e);
     const {
-      gutterSize = defaultGutterSize,
-      direction = defaultDirection,
-      minSize = defaultMinSize,
+      gutterSize,
+      direction,
+      minSize,
       computeNewSizesFn = computeNewSizes,
       onSetSizes,
       sizes: propSizes,
@@ -197,31 +157,27 @@ export default class GManSplit extends React.Component {
       clientSize,
     } = getDirectionProps(direction);
 
-    const deltaPX = getMouseOrTouchPosition(e, clientAxis) - mouseStart;
-    const outerSizePX = this.elementRef.current[clientSize];
-
     const numPanes = sizes.length;
     const numGutters = numPanes - 1;
     const totalGutterSizePX = numGutters * gutterSize;
 
-    const gutterReservedSizesPX = distribute(totalGutterSizePX, numPanes);
+    const deltaPX = getMouseOrTouchPosition(e, clientAxis) - mouseStart;
+    const outerSizePX = this.elementRef.current[clientSize];
+    const innerSizePX = outerSizePX - totalGutterSizePX;
 
     const newSizes = computeNewSizesFn({
       startSizes,
-      currentSizes: sizes,
       prevPaneNdx,
-      gutterReservedSizesPX,
       minSizePX: minSize,
+      innerSizePX,
       deltaPX,
-      outerSizePX: outerSizePX - totalGutterSizePX,
     });
-
     setSizes(newSizes);
   };
   handleMouseDownAndTouchStart = (e) => {
     stopMobileBrowserFromScrolling(e);
     const {
-      direction = defaultDirection,
+      direction,
       onSetSizes,
       sizes: propsSizes,
     } = this.props;
@@ -235,8 +191,10 @@ export default class GManSplit extends React.Component {
     document.addEventListener("touchend", this.handleMouseUpAndTouchEnd);
     const gutterNdx = Array.prototype.indexOf.call(e.target.parentElement.children, e.target);
     const prevPaneNdx = (gutterNdx - 1) / 2;    
+    const sizes = onSetSizes ? propsSizes : this.state.sizes;
+    const startSizes = sizes.slice();
     this.setState({
-      startSizes: onSetSizes ? propsSizes : this.state.sizes.slice(),
+      startSizes: startSizes,
       mouseStart: getMouseOrTouchPosition(e, clientAxis),
       prevPaneNdx,
       dragging: true,
@@ -298,12 +256,15 @@ export default class GManSplit extends React.Component {
   }
   render() {
     const {
-      children, 
-      direction = defaultDirection, 
-      gutterSize = defaultGutterSize, 
+      children,
+      direction,
+      gutterSize,
       sizes: propSizes,
       onSetSizes,
       minSize,
+      className: splitClassName,
+      gutterClassName,
+      paneClassName,
       ...rest
     } = this.props;
     const {
@@ -311,22 +272,14 @@ export default class GManSplit extends React.Component {
       prevPaneNdx,
       sizes: stateSizes,
     } = this.state;
-    const {
-      dimension,
-      style,
-    } = getDirectionProps(direction);
 
     const sizes = onSetSizes ? propSizes : stateSizes;
-    const numPanes = React.Children.count(children);
-    const numGutters = numPanes - 1;
-    const totalGutterSpace = gutterSize * numGutters;
-    const gutterStyle = {[dimension]: `${gutterSize}px`};
-    const gutterReservedSizes = distribute(totalGutterSpace, numPanes);
+    const gutterStyle = {flexBasis: gutterSize ? `${gutterSize}px` : '0'};
 
     let childNdx = 0;
     let first = true;
     const newChildren = [];
-    React.Children.forEach(children, (child, props) => {
+    React.Children.forEach(children, (child) => {
       if (!React.isValidElement(child)) {
         return null;
       }
@@ -338,18 +291,18 @@ export default class GManSplit extends React.Component {
             dragging={dragging}
             current={dragging && childNdx === prevPaneNdx + 1}
             style={gutterStyle}
+            gutterClassName={gutterClassName}
             onMouseDownAndTouchStart={this.handleMouseDownAndTouchStart}
           />
         );
       }
 
       const style = {
-        position: 'relative',
-        [dimension]: `calc(${sizes[childNdx] * 100}% - ${gutterReservedSizes[childNdx]}px)`,
+        flexBasis: `${sizes[childNdx] * 100}%`,
       };
 
       newChildren.push(
-        <div key={`pane${newChildren.length}`} style={style}>
+        <div key={`pane${newChildren.length}`} className={paneClassName} style={style}>
           {React.cloneElement(child)}
         </div>
       );
@@ -358,17 +311,16 @@ export default class GManSplit extends React.Component {
     });
     return (
       <div
-        className="split"
+        className={classNames(splitClassName, `${splitClassName}-${direction}`, {[`${splitClassName}-dragging`]: dragging})}
         ref={this.elementRef}
         style={{
           ...this.props.style,
-          ...style,
           ...(dragging && {userSelect: 'none'})
         }}
         {...rest}
       >
         {newChildren}
-        {dragging ? 
+        {dragging ?
           <style>
             iframe {'{'}
               pointer-events: none !important;
@@ -380,11 +332,26 @@ export default class GManSplit extends React.Component {
   }
 }
 
-/*
-direction
-sizes
-onSetSizes
-compute
+Split.defaultProps = {
+  className: 'split',
+  gutterClassName: 'gutter',
+  paneClassName: 'pane',
+  gutterSize: 10,
+  minSize: 10,
+  direction: 'horizontal',
+};
 
-*/
+Split.propTypes = {
+  direction: PropTypes.oneOf(['horizontal', 'vertical']),
+  sizes: PropTypes.arrayOf(PropTypes.number),
 
+  minSize: PropTypes.number,
+  gutterSize: PropTypes.number,
+
+  className: PropTypes.string,
+  gutterClassName: PropTypes.string,
+  paneClassName: PropTypes.string,
+
+  onSetSizes: PropTypes.func,
+  computeNewSizesFn: PropTypes.func,
+};
