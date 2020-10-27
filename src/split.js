@@ -251,7 +251,7 @@ export default class Split extends React.Component {
     const {sizes} = this.state;
     const numChildren = React.Children.count(children);
     if (sizes.length !== numChildren) {
-      setTimeout(this.recomputeSizes);
+      this.recomputeSizes();
     }
   }
   render() {
