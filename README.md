@@ -1,4 +1,4 @@
-<img src="https://greggman.github.io/react-split-it/resources/logo.svg" style="height: 200px;">
+<img src="https://greggman.github.io/react-split-it/resources/logo192.png">
 
 # react-split-it
 
