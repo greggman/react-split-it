@@ -8,7 +8,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/greggman/react-split-it"
-  },  
+  },
   "bugs": {
     "url": "https://github.com/greggman/react-split-it/issues"
   },
@@ -32,7 +32,6 @@
     "src"
   ],
   "scripts": {
-    "prepublish": "rollup -c",
     "build": "rollup -c",
     "watch": "rollup -cw"
   },
