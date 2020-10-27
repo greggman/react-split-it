@@ -701,13 +701,14 @@ Split.defaultProps = {
 };
 Split.propTypes = {
   direction: PropTypes.oneOf(['horizontal', 'vertical']),
+  sizes: PropTypes.arrayOf(PropTypes.number),
+  minSize: PropTypes.number,
+  gutterSize: PropTypes.number,
   className: PropTypes.string,
   gutterClassName: PropTypes.string,
   paneClassName: PropTypes.string,
-  minSize: PropTypes.number,
   onSetSizes: PropTypes.func,
-  computeNewSizesFn: PropTypes.func,
-  sizes: PropTypes.arrayOf(PropTypes.number)
+  computeNewSizesFn: PropTypes.func
 };
 
 export default Split;

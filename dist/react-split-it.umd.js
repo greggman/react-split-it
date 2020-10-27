@@ -709,13 +709,14 @@
   };
   Split.propTypes = {
     direction: PropTypes__default['default'].oneOf(['horizontal', 'vertical']),
+    sizes: PropTypes__default['default'].arrayOf(PropTypes__default['default'].number),
+    minSize: PropTypes__default['default'].number,
+    gutterSize: PropTypes__default['default'].number,
     className: PropTypes__default['default'].string,
     gutterClassName: PropTypes__default['default'].string,
     paneClassName: PropTypes__default['default'].string,
-    minSize: PropTypes__default['default'].number,
     onSetSizes: PropTypes__default['default'].func,
-    computeNewSizesFn: PropTypes__default['default'].func,
-    sizes: PropTypes__default['default'].arrayOf(PropTypes__default['default'].number)
+    computeNewSizesFn: PropTypes__default['default'].func
   };
 
   return Split;
