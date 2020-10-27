@@ -24,7 +24,7 @@
   background: #8cF;
 }
 .gutter-dragging:hover {
-  background: cyan !important;
+  background: cyan;
 }
 
 .pane {

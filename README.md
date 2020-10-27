@@ -61,6 +61,47 @@ react-split-it is to do as little as possible and pass
 on the rest to you. That way it's more flexible since
 almost nothing is hard coded.
 
+Here is the minimal css you need to provide.
+<sub>(assuming you don't change the class names, see below)</sub>
+
+```css
+.split-horizontal {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+.split-vertical {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.gutter {
+  flex-shrink: 0;
+  flex-grow: 0;
+  background: gray;
+}
+.gutter-horizontal {
+  cursor: col-resize;
+}
+.gutter-vertical {
+  cursor: row-resize;
+}
+.gutter:hover {
+  background: #8cF;
+}
+.gutter-dragging:hover {
+  background: cyan;
+}
+
+.pane {
+  flex-shrink: 1;
+  flex-grow: 1;
+  overflow: hidden;
+  position: relative;
+}
+```
+
 ## How it works
 
 Given the example above this is what your actual HTML elements will look like
