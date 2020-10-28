@@ -1,6 +1,14 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import {classNames} from './css-utils';
+import {classNames} from './css-utils.js';
+import Gutter from './gutter.js';
+import moveGuttersComputeNewSizes from './move-gutters-compute-new-sizes.js';
+import stableGuttersComputeNewSizes from './stable-gutters-compute-new-sizes.js';
+
+export {
+  moveGuttersComputeNewSizes,
+  stableGuttersComputeNewSizes,
+};
 
 function normalizeSizes(sizes) {
   const totalSize = sizes.reduce((sum, v) => sum + v, 0);
@@ -49,65 +57,7 @@ const getDirectionProps = direction => (direction === 'horizontal')
       clientSize: 'clientHeight',
     };
 
-function computeNewSizes({
-  startSizes,
-  prevPaneNdx,
-  minSizePX,
-  deltaPX,
-  innerSizePX,
-}) {
-  const nextPaneNdx = prevPaneNdx + 1;
-  const pairSize = startSizes[prevPaneNdx] + startSizes[nextPaneNdx];
-  const pairSizePX = pairSize * innerSizePX;
-  const prevPaneStartSizePX = startSizes[prevPaneNdx] * pairSizePX / pairSize;
-  const prevPaneNewSizePX = Math.min(
-    Math.max(minSizePX, prevPaneStartSizePX + deltaPX),
-    pairSizePX - minSizePX);
-  const nextPaneNewSizePX = pairSizePX - prevPaneNewSizePX;
-  const newSizes = [
-    ...startSizes.slice(0, prevPaneNdx),
-    prevPaneNewSizePX / innerSizePX,
-    nextPaneNewSizePX / innerSizePX,
-    ...startSizes.slice(prevPaneNdx + 2, startSizes.length),
-  ];
-  return newSizes;
-}
-
 const stopMobileBrowserFromScrolling = e => e.preventDefault();
-
-class Gutter extends React.Component {
-  constructor(props) {
-    super(props);
-    this.elementRef = React.createRef();
-  }
-  handleMouseDownAndTouchStart = (e) => {
-    const {onMouseDownAndTouchStart} = this.props;
-    onMouseDownAndTouchStart(e);
-  }
-  componentDidMount() {
-    // There's no way in React 16 to add passive false event listeners
-    // which means there is no way to drag a splitter and prevent mobile browsers
-    // from scrolling without doing this manually.
-    const elem = this.elementRef.current;
-    elem.addEventListener('mousedown', this.handleMouseDownAndTouchStart, {passive: false});
-    elem.addEventListener('touchstart', this.handleMouseDownAndTouchStart, {passive: false});
-  }
-  componentWillUnmount() {
-    const elem = this.elementRef.current;
-    elem.removeEventListener('mousedown', this.handleMouseDownAndTouchStart);
-    elem.removeEventListener('touchstart', this.handleMouseDownAndTouchStart);
-  }
-  render() {
-    const {direction, dragging, current, style, gutterClassName} = this.props;
-    return (
-      <div
-        ref={this.elementRef}
-        className={`${gutterClassName} ${gutterClassName}-${direction} ${dragging && current ? `${gutterClassName}-dragging` : ''}`}
-        style={style}
-      />
-    );
-  }
-}
 
 export default class Split extends React.Component {
   constructor(props) {
@@ -115,11 +65,12 @@ export default class Split extends React.Component {
     const {
       children,
       sizes,
+      onSetSizes,
     } = props;
     const numPanes = React.Children.count(children);
     const size = 1 / numPanes;
     this.state = {
-      sizes: sizes || new Array(numPanes).fill(size), 
+      sizes: sizes ? (onSetSizes ? sizes : normalizeSizes(sizes)) : new Array(numPanes).fill(size),
     };
     this.elementRef = React.createRef();
   }
@@ -139,7 +90,7 @@ export default class Split extends React.Component {
       gutterSize,
       direction,
       minSize,
-      computeNewSizesFn = computeNewSizes,
+      computeNewSizesFn,
       onSetSizes,
       sizes: propSizes,
     } = this.props;
@@ -168,8 +119,10 @@ export default class Split extends React.Component {
     const newSizes = computeNewSizesFn({
       startSizes,
       prevPaneNdx,
+      minSize: minSize / innerSizePX,
       minSizePX: minSize,
       innerSizePX,
+      delta: deltaPX / innerSizePX,
       deltaPX,
     });
     setSizes(newSizes);
@@ -265,7 +218,6 @@ export default class Split extends React.Component {
       className: splitClassName,
       gutterClassName,
       paneClassName,
-      ...rest
     } = this.props;
     const {
       dragging,
@@ -317,7 +269,6 @@ export default class Split extends React.Component {
           ...this.props.style,
           ...(dragging && {userSelect: 'none'})
         }}
-        {...rest}
       >
         {newChildren}
         {dragging ?
@@ -339,6 +290,7 @@ Split.defaultProps = {
   gutterSize: 10,
   minSize: 10,
   direction: 'horizontal',
+  computeNewSizesFn: stableGuttersComputeNewSizes,
 };
 
 Split.propTypes = {
@@ -355,3 +307,6 @@ Split.propTypes = {
   onSetSizes: PropTypes.func,
   computeNewSizesFn: PropTypes.func,
 };
+
+Split.moveGuttersComputeNewSizes = moveGuttersComputeNewSizes;
+Split.stableGuttersComputeNewSizes = stableGuttersComputeNewSizes;
