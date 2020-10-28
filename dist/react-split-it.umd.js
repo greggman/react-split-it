@@ -2,12 +2,12 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('prop-types'), require('react')) :
   typeof define === 'function' && define.amd ? define(['prop-types', 'react'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.Split = factory(global.PropTypes, global.React));
-}(this, (function (PropTypes, React) { 'use strict';
+}(this, (function (PropTypes, React$1) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
   var PropTypes__default = /*#__PURE__*/_interopDefaultLegacy(PropTypes);
-  var React__default = /*#__PURE__*/_interopDefaultLegacy(React);
+  var React__default = /*#__PURE__*/_interopDefaultLegacy(React$1);
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -44,24 +44,6 @@
     }
 
     return obj;
-  }
-
-  function _extends() {
-    _extends = Object.assign || function (target) {
-      for (var i = 1; i < arguments.length; i++) {
-        var source = arguments[i];
-
-        for (var key in source) {
-          if (Object.prototype.hasOwnProperty.call(source, key)) {
-            target[key] = source[key];
-          }
-        }
-      }
-
-      return target;
-    };
-
-    return _extends.apply(this, arguments);
   }
 
   function ownKeys(object, enumerableOnly) {
@@ -140,42 +122,6 @@
     } catch (e) {
       return false;
     }
-  }
-
-  function _objectWithoutPropertiesLoose(source, excluded) {
-    if (source == null) return {};
-    var target = {};
-    var sourceKeys = Object.keys(source);
-    var key, i;
-
-    for (i = 0; i < sourceKeys.length; i++) {
-      key = sourceKeys[i];
-      if (excluded.indexOf(key) >= 0) continue;
-      target[key] = source[key];
-    }
-
-    return target;
-  }
-
-  function _objectWithoutProperties(source, excluded) {
-    if (source == null) return {};
-
-    var target = _objectWithoutPropertiesLoose(source, excluded);
-
-    var key, i;
-
-    if (Object.getOwnPropertySymbols) {
-      var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-      for (i = 0; i < sourceSymbolKeys.length; i++) {
-        key = sourceSymbolKeys[i];
-        if (excluded.indexOf(key) >= 0) continue;
-        if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-        target[key] = source[key];
-      }
-    }
-
-    return target;
   }
 
   function _assertThisInitialized(self) {
@@ -323,6 +269,150 @@
     return names.join(' ');
   }
 
+  var Gutter = /*#__PURE__*/function (_React$Component) {
+    _inherits(Gutter, _React$Component);
+
+    var _super = _createSuper(Gutter);
+
+    function Gutter(props) {
+      var _this;
+
+      _classCallCheck(this, Gutter);
+
+      _this = _super.call(this, props);
+
+      _this.handleMouseDownAndTouchStart = function (e) {
+        var onMouseDownAndTouchStart = _this.props.onMouseDownAndTouchStart;
+        onMouseDownAndTouchStart(e);
+      };
+
+      _this.elementRef = React.createRef();
+      return _this;
+    }
+
+    _createClass(Gutter, [{
+      key: "componentDidMount",
+      value: function componentDidMount() {
+        // There's no way in React 16 to add passive false event listeners
+        // which means there is no way to drag a splitter and prevent mobile browsers
+        // from scrolling without doing this manually.
+        var elem = this.elementRef.current;
+        elem.addEventListener('mousedown', this.handleMouseDownAndTouchStart, {
+          passive: false
+        });
+        elem.addEventListener('touchstart', this.handleMouseDownAndTouchStart, {
+          passive: false
+        });
+      }
+    }, {
+      key: "componentWillUnmount",
+      value: function componentWillUnmount() {
+        var elem = this.elementRef.current;
+        elem.removeEventListener('mousedown', this.handleMouseDownAndTouchStart);
+        elem.removeEventListener('touchstart', this.handleMouseDownAndTouchStart);
+      }
+    }, {
+      key: "render",
+      value: function render() {
+        var _this$props = this.props,
+            direction = _this$props.direction,
+            dragging = _this$props.dragging,
+            current = _this$props.current,
+            style = _this$props.style,
+            gutterClassName = _this$props.gutterClassName;
+        return /*#__PURE__*/React.createElement("div", {
+          ref: this.elementRef,
+          className: "".concat(gutterClassName, " ").concat(gutterClassName, "-").concat(direction, " ").concat(dragging && current ? "".concat(gutterClassName, "-dragging") : ''),
+          style: style
+        });
+      }
+    }]);
+
+    return Gutter;
+  }(React.Component);
+
+  function computeSize(sizes, start, end) {
+    var size = 0;
+
+    for (var i = start; i < end; ++i) {
+      size += sizes[i];
+    }
+
+    return size;
+  }
+
+  function moveGuttersComputeNewSizes(_ref) {
+    var startSizes = _ref.startSizes,
+        prevPaneNdx = _ref.prevPaneNdx,
+        minSize = _ref.minSize,
+        delta = _ref.delta;
+    var nextPaneNdx = prevPaneNdx + 1; //    0           1        2        3
+    // |---------|---prev--G--next---|------|
+    //                     u
+    //                     t
+    //                     t
+    //                     e
+    //                     r
+
+    if (delta < 0) {
+      // we're dragging gutter left
+      var minSizeBeforeNext = nextPaneNdx * minSize;
+      var currentSizeBeforeNext = computeSize(startSizes, 0, nextPaneNdx);
+      var movableSize = currentSizeBeforeNext - minSizeBeforeNext;
+      var totalDelta = Math.min(-delta, movableSize); // distribute the delta to the left
+
+      var newSizes = startSizes.slice();
+      newSizes[nextPaneNdx] += totalDelta;
+
+      for (var i = prevPaneNdx; totalDelta > 0 || i >= 0; --i) {
+        var oldSize = newSizes[i];
+        var newSize = Math.max(oldSize - totalDelta, minSize);
+        newSizes[i] = newSize;
+        totalDelta -= oldSize - newSize;
+      }
+
+      return newSizes;
+    } else {
+      // we're dragging gutter right
+      var minSizeAfterPrev = (startSizes.length - nextPaneNdx) * minSize;
+      var currentSizeAfterPrev = computeSize(startSizes, nextPaneNdx, startSizes.length);
+
+      var _movableSize = currentSizeAfterPrev - minSizeAfterPrev;
+
+      var _totalDelta = Math.min(delta, _movableSize); // distribute the delta to the right
+
+
+      var _newSizes = startSizes.slice();
+
+      _newSizes[prevPaneNdx] += _totalDelta;
+
+      for (var _i = nextPaneNdx; _totalDelta > 0 || _i < _newSizes.length; ++_i) {
+        var _oldSize = _newSizes[_i];
+
+        var _newSize = Math.max(_oldSize - _totalDelta, minSize);
+
+        _newSizes[_i] = _newSize;
+        _totalDelta -= _oldSize - _newSize;
+      }
+
+      return _newSizes;
+    }
+  }
+
+  function stableGuttersComputeNewSizes(_ref) {
+    var startSizes = _ref.startSizes,
+        prevPaneNdx = _ref.prevPaneNdx,
+        minSize = _ref.minSize,
+        delta = _ref.delta;
+    var nextPaneNdx = prevPaneNdx + 1;
+    var pairSize = startSizes[prevPaneNdx] + startSizes[nextPaneNdx];
+    var prevPaneStartSize = startSizes[prevPaneNdx];
+    var prevPaneNewSize = Math.min(Math.max(minSize, prevPaneStartSize + delta), pairSize - minSize);
+    var nextPaneNewSize = pairSize - prevPaneNewSize;
+    var newSizes = [].concat(_toConsumableArray(startSizes.slice(0, prevPaneNdx)), [prevPaneNewSize, nextPaneNewSize], _toConsumableArray(startSizes.slice(prevPaneNdx + 2, startSizes.length)));
+    return newSizes;
+  }
+
   function normalizeSizes(sizes) {
     var totalSize = sizes.reduce(function (sum, v) {
       return sum + v;
@@ -376,133 +466,54 @@
     };
   };
 
-  function computeNewSizes(_ref) {
-    var startSizes = _ref.startSizes,
-        prevPaneNdx = _ref.prevPaneNdx,
-        minSizePX = _ref.minSizePX,
-        deltaPX = _ref.deltaPX,
-        innerSizePX = _ref.innerSizePX;
-    var nextPaneNdx = prevPaneNdx + 1;
-    var pairSize = startSizes[prevPaneNdx] + startSizes[nextPaneNdx];
-    var pairSizePX = pairSize * innerSizePX;
-    var prevPaneStartSizePX = startSizes[prevPaneNdx] * pairSizePX / pairSize;
-    var prevPaneNewSizePX = Math.min(Math.max(minSizePX, prevPaneStartSizePX + deltaPX), pairSizePX - minSizePX);
-    var nextPaneNewSizePX = pairSizePX - prevPaneNewSizePX;
-    var newSizes = [].concat(_toConsumableArray(startSizes.slice(0, prevPaneNdx)), [prevPaneNewSizePX / innerSizePX, nextPaneNewSizePX / innerSizePX], _toConsumableArray(startSizes.slice(prevPaneNdx + 2, startSizes.length)));
-    return newSizes;
-  }
-
   var stopMobileBrowserFromScrolling = function stopMobileBrowserFromScrolling(e) {
     return e.preventDefault();
   };
 
-  var Gutter = /*#__PURE__*/function (_React$Component) {
-    _inherits(Gutter, _React$Component);
+  var Split = /*#__PURE__*/function (_React$Component) {
+    _inherits(Split, _React$Component);
 
-    var _super = _createSuper(Gutter);
-
-    function Gutter(props) {
-      var _this;
-
-      _classCallCheck(this, Gutter);
-
-      _this = _super.call(this, props);
-
-      _this.handleMouseDownAndTouchStart = function (e) {
-        var onMouseDownAndTouchStart = _this.props.onMouseDownAndTouchStart;
-        onMouseDownAndTouchStart(e);
-      };
-
-      _this.elementRef = /*#__PURE__*/React__default['default'].createRef();
-      return _this;
-    }
-
-    _createClass(Gutter, [{
-      key: "componentDidMount",
-      value: function componentDidMount() {
-        // There's no way in React 16 to add passive false event listeners
-        // which means there is no way to drag a splitter and prevent mobile browsers
-        // from scrolling without doing this manually.
-        var elem = this.elementRef.current;
-        elem.addEventListener('mousedown', this.handleMouseDownAndTouchStart, {
-          passive: false
-        });
-        elem.addEventListener('touchstart', this.handleMouseDownAndTouchStart, {
-          passive: false
-        });
-      }
-    }, {
-      key: "componentWillUnmount",
-      value: function componentWillUnmount() {
-        var elem = this.elementRef.current;
-        elem.removeEventListener('mousedown', this.handleMouseDownAndTouchStart);
-        elem.removeEventListener('touchstart', this.handleMouseDownAndTouchStart);
-      }
-    }, {
-      key: "render",
-      value: function render() {
-        var _this$props = this.props,
-            direction = _this$props.direction,
-            dragging = _this$props.dragging,
-            current = _this$props.current,
-            style = _this$props.style,
-            gutterClassName = _this$props.gutterClassName;
-        return /*#__PURE__*/React__default['default'].createElement("div", {
-          ref: this.elementRef,
-          className: "".concat(gutterClassName, " ").concat(gutterClassName, "-").concat(direction, " ").concat(dragging && current ? "".concat(gutterClassName, "-dragging") : ''),
-          style: style
-        });
-      }
-    }]);
-
-    return Gutter;
-  }(React__default['default'].Component);
-
-  var Split = /*#__PURE__*/function (_React$Component2) {
-    _inherits(Split, _React$Component2);
-
-    var _super2 = _createSuper(Split);
+    var _super = _createSuper(Split);
 
     function Split(props) {
-      var _this2;
+      var _this;
 
       _classCallCheck(this, Split);
 
-      _this2 = _super2.call(this, props);
+      _this = _super.call(this, props);
 
-      _this2._setSizes = function (sizes) {
-        _this2.setState({
+      _this._setSizes = function (sizes) {
+        _this.setState({
           sizes: sizes
         });
       };
 
-      _this2.handleMouseUpAndTouchEnd = function () {
-        document.removeEventListener("mousemove", _this2.handleMouseAndTouchMove);
-        document.removeEventListener("mouseup", _this2.handleMouseUpAndTouchEnd);
-        document.removeEventListener("touchmove", _this2.handleMouseAndTouchMove);
-        document.removeEventListener("touchend", _this2.handleMouseUpAndTouchEnd);
+      _this.handleMouseUpAndTouchEnd = function () {
+        document.removeEventListener("mousemove", _this.handleMouseAndTouchMove);
+        document.removeEventListener("mouseup", _this.handleMouseUpAndTouchEnd);
+        document.removeEventListener("touchmove", _this.handleMouseAndTouchMove);
+        document.removeEventListener("touchend", _this.handleMouseUpAndTouchEnd);
 
-        _this2.setState({
+        _this.setState({
           dragging: false
         });
       };
 
-      _this2.handleMouseAndTouchMove = function (e) {
+      _this.handleMouseAndTouchMove = function (e) {
         stopMobileBrowserFromScrolling(e);
-        var _this2$props = _this2.props,
-            gutterSize = _this2$props.gutterSize,
-            direction = _this2$props.direction,
-            minSize = _this2$props.minSize,
-            _this2$props$computeN = _this2$props.computeNewSizesFn,
-            computeNewSizesFn = _this2$props$computeN === void 0 ? computeNewSizes : _this2$props$computeN,
-            onSetSizes = _this2$props.onSetSizes,
-            propSizes = _this2$props.sizes;
-        var _this2$state = _this2.state,
-            prevPaneNdx = _this2$state.prevPaneNdx,
-            mouseStart = _this2$state.mouseStart,
-            startSizes = _this2$state.startSizes,
-            stateSizes = _this2$state.sizes;
-        var setSizes = onSetSizes || _this2._setSizes;
+        var _this$props = _this.props,
+            gutterSize = _this$props.gutterSize,
+            direction = _this$props.direction,
+            minSize = _this$props.minSize,
+            computeNewSizesFn = _this$props.computeNewSizesFn,
+            onSetSizes = _this$props.onSetSizes,
+            propSizes = _this$props.sizes;
+        var _this$state = _this.state,
+            prevPaneNdx = _this$state.prevPaneNdx,
+            mouseStart = _this$state.mouseStart,
+            startSizes = _this$state.startSizes,
+            stateSizes = _this$state.sizes;
+        var setSizes = onSetSizes || _this._setSizes;
         var sizes = onSetSizes ? propSizes : stateSizes;
 
         var _getDirectionProps = getDirectionProps(direction),
@@ -513,42 +524,44 @@
         var numGutters = numPanes - 1;
         var totalGutterSizePX = numGutters * gutterSize;
         var deltaPX = getMouseOrTouchPosition(e, clientAxis) - mouseStart;
-        var outerSizePX = _this2.elementRef.current[clientSize];
+        var outerSizePX = _this.elementRef.current[clientSize];
         var innerSizePX = outerSizePX - totalGutterSizePX;
         var newSizes = computeNewSizesFn({
           startSizes: startSizes,
           prevPaneNdx: prevPaneNdx,
+          minSize: minSize / innerSizePX,
           minSizePX: minSize,
           innerSizePX: innerSizePX,
+          delta: deltaPX / innerSizePX,
           deltaPX: deltaPX
         });
         setSizes(newSizes);
       };
 
-      _this2.handleMouseDownAndTouchStart = function (e) {
+      _this.handleMouseDownAndTouchStart = function (e) {
         stopMobileBrowserFromScrolling(e);
-        var _this2$props2 = _this2.props,
-            direction = _this2$props2.direction,
-            onSetSizes = _this2$props2.onSetSizes,
-            propsSizes = _this2$props2.sizes;
+        var _this$props2 = _this.props,
+            direction = _this$props2.direction,
+            onSetSizes = _this$props2.onSetSizes,
+            propsSizes = _this$props2.sizes;
 
         var _getDirectionProps2 = getDirectionProps(direction),
             clientAxis = _getDirectionProps2.clientAxis;
 
-        document.addEventListener("mousemove", _this2.handleMouseAndTouchMove, {
+        document.addEventListener("mousemove", _this.handleMouseAndTouchMove, {
           passive: false
         });
-        document.addEventListener("mouseup", _this2.handleMouseUpAndTouchEnd);
-        document.addEventListener("touchmove", _this2.handleMouseAndTouchMove, {
+        document.addEventListener("mouseup", _this.handleMouseUpAndTouchEnd);
+        document.addEventListener("touchmove", _this.handleMouseAndTouchMove, {
           passive: false
         });
-        document.addEventListener("touchend", _this2.handleMouseUpAndTouchEnd);
+        document.addEventListener("touchend", _this.handleMouseUpAndTouchEnd);
         var gutterNdx = Array.prototype.indexOf.call(e.target.parentElement.children, e.target);
         var prevPaneNdx = (gutterNdx - 1) / 2;
-        var sizes = onSetSizes ? propsSizes : _this2.state.sizes;
+        var sizes = onSetSizes ? propsSizes : _this.state.sizes;
         var startSizes = sizes.slice();
 
-        _this2.setState({
+        _this.setState({
           startSizes: startSizes,
           mouseStart: getMouseOrTouchPosition(e, clientAxis),
           prevPaneNdx: prevPaneNdx,
@@ -556,7 +569,7 @@
         });
       };
 
-      _this2.recomputeSizes = function () {
+      _this.recomputeSizes = function () {
         // here it's not entirely clear what to do. Maybe we need options
         // If they user removes a child which sizes do they want? I guess
         // since they removed a child they passed in new sizes so we should
@@ -583,42 +596,43 @@
         //
         // But, just so we don't completely fail if the user has not opted
         // into managing the size state then at least do something.
-        var sizes = _this2.state.sizes;
-        var _this2$props3 = _this2.props,
-            minSize = _this2$props3.minSize,
-            direction = _this2$props3.direction,
-            gutterSize = _this2$props3.gutterSize;
+        var sizes = _this.state.sizes;
+        var _this$props3 = _this.props,
+            minSize = _this$props3.minSize,
+            direction = _this$props3.direction,
+            gutterSize = _this$props3.gutterSize;
 
         var _getDirectionProps3 = getDirectionProps(direction),
             clientSize = _getDirectionProps3.clientSize;
 
-        var numChildren = React__default['default'].Children.count(_this2.props.children);
+        var numChildren = React__default['default'].Children.count(_this.props.children);
         var newSizes = numChildren < sizes.length // a child was removed, normalizes the sizes
         ? normalizeSizes(sizes.slice(0, numChildren)) // children were added, make space for them
-        : addSpaceForChildren(sizes, numChildren, gutterSize, minSize, _this2.elementRef.current.parentElement[clientSize]);
+        : addSpaceForChildren(sizes, numChildren, gutterSize, minSize, _this.elementRef.current.parentElement[clientSize]);
 
-        _this2._setSizes(newSizes);
+        _this._setSizes(newSizes);
       };
 
       var children = props.children,
-          _sizes = props.sizes;
+          _sizes = props.sizes,
+          _onSetSizes = props.onSetSizes;
 
       var _numPanes = React__default['default'].Children.count(children);
 
       var size = 1 / _numPanes;
-      _this2.state = {
-        sizes: _sizes || new Array(_numPanes).fill(size)
+      _this.state = {
+        sizes: _sizes ? _onSetSizes ? _sizes : normalizeSizes(_sizes) : new Array(_numPanes).fill(size)
       };
-      _this2.elementRef = /*#__PURE__*/React__default['default'].createRef();
-      return _this2;
+      _this.elementRef = /*#__PURE__*/React__default['default'].createRef();
+      return _this;
     }
 
     _createClass(Split, [{
       key: "componentDidUpdate",
       value: function componentDidUpdate() {
-        var _this$props2 = this.props,
-            children = _this$props2.children,
-            onSetSizes = _this$props2.onSetSizes; // we need to check if new elements were added.
+        var _this$props4 = this.props,
+            children = _this$props4.children,
+            onSetSizes = _this$props4.onSetSizes; // we need to check if new elements were added.
 
         if (onSetSizes) {
           return; // not our responsibility
@@ -634,24 +648,22 @@
     }, {
       key: "render",
       value: function render() {
-        var _this3 = this;
+        var _this2 = this;
 
-        var _this$props3 = this.props,
-            children = _this$props3.children,
-            direction = _this$props3.direction,
-            gutterSize = _this$props3.gutterSize,
-            propSizes = _this$props3.sizes,
-            onSetSizes = _this$props3.onSetSizes,
-            minSize = _this$props3.minSize,
-            splitClassName = _this$props3.className,
-            gutterClassName = _this$props3.gutterClassName,
-            paneClassName = _this$props3.paneClassName,
-            rest = _objectWithoutProperties(_this$props3, ["children", "direction", "gutterSize", "sizes", "onSetSizes", "minSize", "className", "gutterClassName", "paneClassName"]);
-
-        var _this$state = this.state,
-            dragging = _this$state.dragging,
-            prevPaneNdx = _this$state.prevPaneNdx,
-            stateSizes = _this$state.sizes;
+        var _this$props5 = this.props,
+            children = _this$props5.children,
+            direction = _this$props5.direction,
+            gutterSize = _this$props5.gutterSize,
+            propSizes = _this$props5.sizes,
+            onSetSizes = _this$props5.onSetSizes,
+            minSize = _this$props5.minSize,
+            splitClassName = _this$props5.className,
+            gutterClassName = _this$props5.gutterClassName,
+            paneClassName = _this$props5.paneClassName;
+        var _this$state2 = this.state,
+            dragging = _this$state2.dragging,
+            prevPaneNdx = _this$state2.prevPaneNdx,
+            stateSizes = _this$state2.sizes;
         var sizes = onSetSizes ? propSizes : stateSizes;
         var gutterStyle = {
           flexBasis: gutterSize ? "".concat(gutterSize, "px") : '0'
@@ -672,7 +684,7 @@
               current: dragging && childNdx === prevPaneNdx + 1,
               style: gutterStyle,
               gutterClassName: gutterClassName,
-              onMouseDownAndTouchStart: _this3.handleMouseDownAndTouchStart
+              onMouseDownAndTouchStart: _this2.handleMouseDownAndTouchStart
             }));
           }
 
@@ -687,13 +699,13 @@
           first = false;
           ++childNdx;
         });
-        return /*#__PURE__*/React__default['default'].createElement("div", _extends({
+        return /*#__PURE__*/React__default['default'].createElement("div", {
           className: classNames(splitClassName, "".concat(splitClassName, "-").concat(direction), _defineProperty({}, "".concat(splitClassName, "-dragging"), dragging)),
           ref: this.elementRef,
           style: _objectSpread2(_objectSpread2({}, this.props.style), dragging && {
             userSelect: 'none'
           })
-        }, rest), newChildren, dragging ? /*#__PURE__*/React__default['default'].createElement("style", null, "iframe ", '{', "pointer-events: none !important;", '}') : []);
+        }, newChildren, dragging ? /*#__PURE__*/React__default['default'].createElement("style", null, "iframe ", '{', "pointer-events: none !important;", '}') : []);
       }
     }]);
 
@@ -705,7 +717,8 @@
     paneClassName: 'pane',
     gutterSize: 10,
     minSize: 10,
-    direction: 'horizontal'
+    direction: 'horizontal',
+    computeNewSizesFn: stableGuttersComputeNewSizes
   };
   Split.propTypes = {
     direction: PropTypes__default['default'].oneOf(['horizontal', 'vertical']),
@@ -718,6 +731,8 @@
     onSetSizes: PropTypes__default['default'].func,
     computeNewSizesFn: PropTypes__default['default'].func
   };
+  Split.moveGuttersComputeNewSizes = moveGuttersComputeNewSizes;
+  Split.stableGuttersComputeNewSizes = stableGuttersComputeNewSizes;
 
   return Split;
 
