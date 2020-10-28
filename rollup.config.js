@@ -26,7 +26,7 @@ export default [
     input: pkg.source,
     output: {
       file: pkg.module,
-      format: 'esm',
+      format: 'cjs',
       exports: 'named',
     },
     ...commonOptions,

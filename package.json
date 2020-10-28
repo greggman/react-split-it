@@ -3,7 +3,7 @@
   "description": "splitter for react",
   "version": "1.1.0",
   "main": "dist/react-split-it.umd.js",
-  "module": "dist/react-split-it.esm.js",
+  "module": "dist/react-split-it.cjs.js",
   "source": "src/split.js",
   "repository": {
     "type": "git",
