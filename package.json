@@ -1,7 +1,7 @@
 {
   "name": "react-split-it",
   "description": "splitter for react",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "main": "dist/react-split-it.umd.js",
   "module": "dist/react-split-it.esm.js",
   "source": "src/split.js",
