@@ -1,3 +1,5 @@
+import React from 'React';
+
 export default class Gutter extends React.Component {
   constructor(props) {
     super(props);
