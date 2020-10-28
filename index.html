@@ -58,11 +58,19 @@
       <section id="example-css" data-caption="The minimal css required" data-type="css"></section>
       <section id="simple" data-caption="Simple Horizontal Split"></section>
       <section id="simple-vertical" data-caption="Simple Vertical Split"></section>
+      <section id="starting-sizes" data-caption="Starting Sizes"></section>
       <section id="nested" data-caption="Nested"></section>
       <section id="zero-width-gutter" data-caption="Zero Width Gutter"></section>
       <section id="zero-height-gutter-vertical" data-caption="Zero Height Gutter Vertical"></section>
+      <section id="move-gutters" data-caption="Move Neighboring Gutters"></section>
       <section id="add-remove-panes" data-caption="Add and Remove Panes (auto)"></section>
       <section id="add-remove-panes-managed" data-caption="Add and Remove Panes (managed)"></section>
+      <section id="bad-compute-new-sizes" data-caption="Simple but *bad* custom compute sizes">
+        <div>This is the simplest example of a <code>computeNewSizes</code> function but it is incomplete
+        because it does not check for minimum sizes or even size &lt 0.
+        To see the issue drag a gutter past any other gutter.
+        For more info <a href="https://github.com/greggman/react-split-it#changing-behavior">see the docs</a>.</div>
+      </section>
     </div>
   </body>
 <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
