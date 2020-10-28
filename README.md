@@ -49,7 +49,7 @@ function SomeComponent(props) {
 
 See [here](https://greggman.github.io/react-split-it/#simple)
 
-There is also [a UMD version](http://unpkg.com/react-split-it). [Example](https://jsfiddle.net/greggman/ctreapqm/)
+There is also [a UMD version](http://unpkg.com/react-split-it). See [Example](https://jsfiddle.net/greggman/ctreapqm/)
 
 **Important!!!**
 
