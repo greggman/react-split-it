@@ -125,11 +125,11 @@ Given the example above this is what your actual HTML elements will look like
 ```
 
 If you click and drag on the first gutter it will adjust
-the percentages in the wrappers to either size. The reason to use percentages is because if the window is resizes the elements will do the correct thing. No need run any code.
+the percentages in the wrappers to either side. The reason to use percentages is because if the window is resized the elements will do the correct thing. No need to run any code.
 
 The reason for the wrappers (vs split.js) is react can't
 set the style of children without their cooperation so
-in react-split-it makes its own children, the wrappers,
+react-split-it makes its own children, the wrappers,
 that it can manipulate.
 
 ## Props
@@ -174,7 +174,7 @@ that it can manipulate.
   it will call `onSetSize` with an array of normalized size numbers.
 
   If you supply this function then whatever values are sent to `onSetSize`
-  should in general be passed back as props.
+  should in general be passed back via props as `sizes`.
 
   [See this example](https://greggman.github.io/react-split-it/#add-remove-panes-managed)
   and [this section](#Handling-adding-and-removing-panes-and-or-recording-sizes).
@@ -182,13 +182,19 @@ that it can manipulate.
 * `computeNewSizesFn` (default: undefined)
 
   This is a function called while dragging a gutter to compute new sizes.
+  react-split-it provides 2 functions, the default is `Split.stableGuttersComputeNewSizes`
+  which only lets a gutter move in the space of the 2 panes to either side.
 
-  see [this section](#Changing-behavior)
+  An alternative is `Split.moveGuttersComputeNewSizes`. You can see an example of its
+  usage [here](https://greggman.githib.io/react-split-it/#move-gutters).
+
+  Otherwise if you want more complex behavior you can provide your own function.
+  See [this section](#Changing-behavior)
 
 ## Handling adding and removing panes and/or recording sizes
 
 By default react-split-it manages the sizes of the panes for you.
-You can pass in initial sizes but after that it's on it's own.
+You can pass in initial sizes but after that it's on its own.
 
 But let's say you have dynamic panes as in
 
@@ -198,7 +204,7 @@ But let's say you have dynamic panes as in
 </Split>
 ```
 
-Let's say say it starts as 3 panes
+Let's say it starts as 3 panes
 
 ```
 +---------+---------+---------+
@@ -281,9 +287,18 @@ with the following properties.
   In other words if you were dragging `B` in the diagram
   above this would be 1.
 
-* `minSizePX`: integer
+* `minSize`: number
+
+  The minimum size specified for panes in normalized values
+
+* `minSizePX`: number
 
   The minimum size specified for panes in CSS pixels
+
+* `delta`: number
+
+  The amount the gutter has been dragged in normalized values
+  since the start of dragging
 
 * `deltaPX`: number
 
@@ -303,34 +318,33 @@ Given this your function should return the new sizes
 of all the panes. As the simplest example
 
 ```javascript
-function badComputeSizes({
+function badComputeNewSizes({
   startSizes,
   prevPaneNdx,
-  minSizePX,
-  deltaPX,
-  innerSizePX,
+  delta,
 }) {
-  const deltaPercent = deltaPX / innerSizePX;
   return [
     ...startSizes.slice(0, prevPaneNdx),
-    startSizes[prevPaneNdx    ] + deltaPercent,
-    startSizes[prevPaneNdx + 1] - deltaPercent,
+    startSizes[prevPaneNdx    ] + delta,
+    startSizes[prevPaneNdx + 1] - delta,
     ...startSizes.slice(prevPaneNdx + 2, startSizes.length),
- ];
+  ];
 }
 ```
 
-You can see the code above, all it does figure out the percentage
-of movement represented by `deltaPX` and the adds that amount to
+You can see the code above, all it does is add `delta` to
 the pane before the spitter and subtracts it from the pane after
-the splitter. If you try it you'll see it works!
+the splitter. [If you try it](https://greggman.github.io/react-split-it/#bad-custom-compute-sizes)
+you'll see it kind of works!
 
-Why it's `bad`. It doesn't check that we don't make any size less then 0
+Why it's bad is because it doesn't check that we don't make any size less then 0
 and it also doesn't check we don't make it less than `minSize` but it's
 the simplest example.
 
-My hope is you should be able to implement pushing the other gutters
-but I have not spent any time trying.
+You can supply your own function if you want to do something fancy like
+different minimum sizes per pane or some gutters able to push other gutters
+and some not. To see how to write one take a look at [the source for
+the default function](https://github.com/greggman/react-split-it/blob/main/src/stable-gutters-compute-new-sizes.js) and [the provided alternative](https://github.com/greggman/react-split-it/blob/main/src/move-gutters-compute-new-sizes.js)
 
 ## Why react-split-it?
 
