@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+
 import {classNames} from './css-utils.js';
 import Gutter from './gutter.js';
 import moveGuttersComputeNewSizes from './move-gutters-compute-new-sizes.js';
