@@ -4,25 +4,7 @@ import resolve from 'rollup-plugin-node-resolve';
 
 import pkg from './package.json';
 
-export default {
-  input: pkg.source,
-  output: [
-    {
-      file: pkg.main,
-      format: 'umd',
-      exports: 'default',
-      name: 'Split',
-      globals: {
-        react: 'React',
-        'prop-types': 'PropTypes',
-      },
-    },
-    {
-      file: pkg.module,
-      format: 'esm',
-      exports: 'named',
-    },
-  ],
+const commonOptions = {
   external: [
     ...Object.keys(pkg.dependencies),
     ...Object.keys(pkg.peerDependencies),
@@ -37,4 +19,30 @@ export default {
   watch: {
     include: 'src/**',
   },
-};
+}
+
+export default [
+  {
+    input: pkg.source,
+    output: {
+      file: pkg.module,
+      format: 'esm',
+      exports: 'named',
+    },
+    ...commonOptions,
+  },
+  {
+    input: 'src/umd.js',
+    output: {
+      file: pkg.main,
+      format: 'umd',
+      exports: 'default',
+      name: 'Split',
+      globals: {
+        react: 'React',
+        'prop-types': 'PropTypes',
+      },
+    },
+    ...commonOptions,
+  },
+];
