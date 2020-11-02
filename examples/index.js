@@ -49,7 +49,7 @@ async function main() {
   }));
 
   // because the page is dynamically generated at runtime
-  window.location.href = window.location.hash;
+  window.location.hash = window.location.hash;
 }
 
 function addCode(elem, text, lang = 'javascript') {
