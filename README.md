@@ -13,7 +13,7 @@ npm install react-split-it
 ```
 
 ```javascript
-import Split as 'react-split-it';
+import Split from 'react-split-it';
 
 function SomeComponent(props) {
   return (
@@ -32,7 +32,7 @@ function SomeComponent(props) {
 Example
 
 ```javascript
-import Split as 'react-split-it';
+import Split from 'react-split-it';
 
 function SomeComponent(props) {
   return (
