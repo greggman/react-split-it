@@ -134,6 +134,9 @@ set the style of children without their cooperation so
 react-split-it makes its own children, the wrappers,
 that it can manipulate.
 
+The reason it uses flex-basis is because the browser will automatically handle the gutters
+where as using something like `width: 33.33333%` will not.
+
 ## Props
 
 * `direction` (default: 'horizontal')
