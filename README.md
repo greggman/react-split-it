@@ -99,8 +99,10 @@ Here is the minimal css you need to provide.
 .pane {
   flex-shrink: 1;
   flex-grow: 1;
-  overflow: hidden;
   position: relative;
+}
+.pane-dragging {
+  overflow: hidden;
 }
 ```
 

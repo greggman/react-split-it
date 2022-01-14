@@ -30,8 +30,9 @@
 .pane {
   flex-shrink: 1;
   flex-grow: 1;
-  overflow: hidden;
   position: relative;
   background: lemonchiffon
 }
-
+.pane-dragging {
+  overflow: hidden;
+}
