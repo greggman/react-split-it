@@ -253,9 +253,10 @@ export default class Split extends React.Component {
       const style = {
         flexBasis: `${sizes[childNdx] * 100}%`,
       };
+      const className = classNames(paneClassName, {[`${paneClassName}-dragging`]: dragging});
 
       newChildren.push(
-        <div key={`pane${newChildren.length}`} className={paneClassName} style={style}>
+        <div key={`pane${newChildren.length}`} className={className} style={style}>
           {React.cloneElement(child)}
         </div>
       );
