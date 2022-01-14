@@ -45,7 +45,7 @@ export default function moveGuttersComputeNewSizes({
     // distribute the delta to the right
     const newSizes = startSizes.slice();
     newSizes[prevPaneNdx] += totalDelta;
-    for (let i = nextPaneNdx; totalDelta > 0 || i < newSizes.length; ++i) {
+    for (let i = nextPaneNdx; totalDelta > 0 && i < newSizes.length; ++i) {
       const oldSize = newSizes[i];
       const newSize = Math.max(oldSize - totalDelta, minSize);
       newSizes[i] = newSize;
