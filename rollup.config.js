@@ -2,6 +2,7 @@ import babel from 'rollup-plugin-babel';
 import commonjs from 'rollup-plugin-commonjs';
 import resolve from 'rollup-plugin-node-resolve';
 import globals from 'rollup-plugin-node-globals';
+import postcss from 'rollup-plugin-postcss'
 
 import pkg from './package.json';
 
@@ -16,6 +17,9 @@ const commonOptions = {
     }),
     resolve(),
     commonjs(),
+		postcss({
+      extensions: ['.css']
+    }),
   ],
   watch: {
     include: 'src/**',

@@ -2929,6 +2929,36 @@
     return newSizes;
   }
 
+  function styleInject(css, ref) {
+    if ( ref === void 0 ) ref = {};
+    var insertAt = ref.insertAt;
+
+    if (!css || typeof document === 'undefined') { return; }
+
+    var head = document.head || document.getElementsByTagName('head')[0];
+    var style = document.createElement('style');
+    style.type = 'text/css';
+
+    if (insertAt === 'top') {
+      if (head.firstChild) {
+        head.insertBefore(style, head.firstChild);
+      } else {
+        head.appendChild(style);
+      }
+    } else {
+      head.appendChild(style);
+    }
+
+    if (style.styleSheet) {
+      style.styleSheet.cssText = css;
+    } else {
+      style.appendChild(document.createTextNode(css));
+    }
+  }
+
+  var css_248z = ".split-horizontal {\r\n\t\tdisplay: flex;\r\n\t\twidth: 100%;\r\n\t\theight: 100%;\r\n}\r\n\r\n.split-vertical {\r\n\t\tdisplay: flex;\r\n\t\tflex-direction: column;\r\n\t\theight: 100%;\r\n}\r\n\r\n.gutter {\r\n\t\tflex-shrink: 0;\r\n\t\tflex-grow: 0;\r\n\t\tbackground: gray;\r\n\t\tz-index: 1;\r\n}\r\n\r\n.gutter-horizontal {\r\n\t\tcursor: col-resize;\r\n}\r\n\r\n.gutter-vertical {\r\n\t\tcursor: row-resize;\r\n}\r\n\r\n.gutter > * {\r\n\tcursor: auto;\r\n}\r\n\r\n.pane {\r\n\t\tflex-shrink: 1;\r\n\t\tflex-grow: 1;\r\n\t\tposition: relative;\r\n\t\tbackground: lemonchiffon\r\n}\r\n\r\n.pane-dragging {\r\n\t\toverflow: hidden;\r\n}";
+  styleInject(css_248z);
+
   function normalizeSizes(sizes) {
     var totalSize = sizes.reduce(function (sum, v) {
       return sum + v;
