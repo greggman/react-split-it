@@ -2821,12 +2821,13 @@ var Gutter = /*#__PURE__*/function (_React$Component) {
           dragging = _this$props.dragging,
           current = _this$props.current,
           style = _this$props.style,
+          gutter = _this$props.gutter,
           gutterClassName = _this$props.gutterClassName;
       return /*#__PURE__*/React.createElement("div", {
         ref: this.elementRef,
         className: "".concat(gutterClassName, " ").concat(gutterClassName, "-").concat(direction, " ").concat(dragging && current ? "".concat(gutterClassName, "-dragging") : ''),
         style: style
-      });
+      }, gutter);
     }
   }]);
 
@@ -2999,17 +3000,24 @@ var Split = /*#__PURE__*/function (_React$Component) {
       _this.setState({
         dragging: false
       });
+
+      var _this$props = _this.props,
+          onSetSizes = _this$props.onSetSizes,
+          propsSizes = _this$props.sizes,
+          onDragEnd = _this$props.onDragEnd;
+      var sizes = onSetSizes ? propsSizes : _this.state.sizes;
+      onDragEnd(sizes);
     };
 
     _this.handleMouseAndTouchMove = function (e) {
       stopMobileBrowserFromScrolling(e);
-      var _this$props = _this.props,
-          gutterSize = _this$props.gutterSize,
-          direction = _this$props.direction,
-          minSize = _this$props.minSize,
-          computeNewSizesFn = _this$props.computeNewSizesFn,
-          onSetSizes = _this$props.onSetSizes,
-          propSizes = _this$props.sizes;
+      var _this$props2 = _this.props,
+          gutterSize = _this$props2.gutterSize,
+          direction = _this$props2.direction,
+          minSize = _this$props2.minSize,
+          computeNewSizesFn = _this$props2.computeNewSizesFn,
+          onSetSizes = _this$props2.onSetSizes,
+          propSizes = _this$props2.sizes;
       var _this$state = _this.state,
           prevPaneNdx = _this$state.prevPaneNdx,
           mouseStart = _this$state.mouseStart,
@@ -3041,11 +3049,15 @@ var Split = /*#__PURE__*/function (_React$Component) {
     };
 
     _this.handleMouseDownAndTouchStart = function (e) {
+      // Because we can now have custom gutter elements, we need to check if the
+      // target is a gutter or not, as the user might have clicked on a child
+      if (!e.target.classList.contains('gutter')) return;
       stopMobileBrowserFromScrolling(e);
-      var _this$props2 = _this.props,
-          direction = _this$props2.direction,
-          onSetSizes = _this$props2.onSetSizes,
-          propsSizes = _this$props2.sizes;
+      var _this$props3 = _this.props,
+          direction = _this$props3.direction,
+          onSetSizes = _this$props3.onSetSizes,
+          onDragStart = _this$props3.onDragStart,
+          propsSizes = _this$props3.sizes;
 
       var _getDirectionProps2 = getDirectionProps(direction),
           clientAxis = _getDirectionProps2.clientAxis;
@@ -3069,6 +3081,8 @@ var Split = /*#__PURE__*/function (_React$Component) {
         prevPaneNdx: prevPaneNdx,
         dragging: true
       });
+
+      onDragStart(sizes);
     };
 
     _this.recomputeSizes = function () {
@@ -3099,10 +3113,10 @@ var Split = /*#__PURE__*/function (_React$Component) {
       // But, just so we don't completely fail if the user has not opted
       // into managing the size state then at least do something.
       var sizes = _this.state.sizes;
-      var _this$props3 = _this.props,
-          minSize = _this$props3.minSize,
-          direction = _this$props3.direction,
-          gutterSize = _this$props3.gutterSize;
+      var _this$props4 = _this.props,
+          minSize = _this$props4.minSize,
+          direction = _this$props4.direction,
+          gutterSize = _this$props4.gutterSize;
 
       var _getDirectionProps3 = getDirectionProps(direction),
           clientSize = _getDirectionProps3.clientSize;
@@ -3132,9 +3146,9 @@ var Split = /*#__PURE__*/function (_React$Component) {
   _createClass(Split, [{
     key: "componentDidUpdate",
     value: function componentDidUpdate() {
-      var _this$props4 = this.props,
-          children = _this$props4.children,
-          onSetSizes = _this$props4.onSetSizes; // we need to check if new elements were added.
+      var _this$props5 = this.props,
+          children = _this$props5.children,
+          onSetSizes = _this$props5.onSetSizes; // we need to check if new elements were added.
 
       if (onSetSizes) {
         return; // not our responsibility
@@ -3152,16 +3166,17 @@ var Split = /*#__PURE__*/function (_React$Component) {
     value: function render() {
       var _this2 = this;
 
-      var _this$props5 = this.props,
-          children = _this$props5.children,
-          direction = _this$props5.direction,
-          gutterSize = _this$props5.gutterSize,
-          propSizes = _this$props5.sizes,
-          onSetSizes = _this$props5.onSetSizes;
-          _this$props5.minSize;
-          var splitClassName = _this$props5.className,
-          gutterClassName = _this$props5.gutterClassName,
-          paneClassName = _this$props5.paneClassName;
+      var _this$props6 = this.props,
+          children = _this$props6.children,
+          direction = _this$props6.direction,
+          gutterSize = _this$props6.gutterSize,
+          propSizes = _this$props6.sizes,
+          onSetSizes = _this$props6.onSetSizes;
+          _this$props6.minSize;
+          var splitClassName = _this$props6.className,
+          gutterClassName = _this$props6.gutterClassName,
+          paneClassName = _this$props6.paneClassName,
+          gutter = _this$props6.gutter;
       var _this$state2 = this.state,
           dragging = _this$state2.dragging,
           prevPaneNdx = _this$state2.prevPaneNdx,
@@ -3186,7 +3201,8 @@ var Split = /*#__PURE__*/function (_React$Component) {
             current: dragging && childNdx === prevPaneNdx + 1,
             style: gutterStyle,
             gutterClassName: gutterClassName,
-            onMouseDownAndTouchStart: _this2.handleMouseDownAndTouchStart
+            onMouseDownAndTouchStart: _this2.handleMouseDownAndTouchStart,
+            gutter: gutter
           }));
         }
 
@@ -3221,18 +3237,24 @@ Split.defaultProps = {
   gutterSize: 10,
   minSize: 10,
   direction: 'horizontal',
-  computeNewSizesFn: stableGuttersComputeNewSizes
+  computeNewSizesFn: stableGuttersComputeNewSizes,
+  gutter: null,
+  onDragStart: function onDragStart() {},
+  onDragEnd: function onDragEnd() {}
 };
 Split.propTypes = {
   direction: PropTypes__default["default"].oneOf(['horizontal', 'vertical']),
   sizes: PropTypes__default["default"].arrayOf(PropTypes__default["default"].number),
   minSize: PropTypes__default["default"].number,
   gutterSize: PropTypes__default["default"].number,
+  gutter: PropTypes__default["default"].element,
   className: PropTypes__default["default"].string,
   gutterClassName: PropTypes__default["default"].string,
   paneClassName: PropTypes__default["default"].string,
   onSetSizes: PropTypes__default["default"].func,
-  computeNewSizesFn: PropTypes__default["default"].func
+  computeNewSizesFn: PropTypes__default["default"].func,
+  onDragStart: PropTypes__default["default"].func,
+  onDragEnd: PropTypes__default["default"].func
 };
 Split.moveGuttersComputeNewSizes = moveGuttersComputeNewSizes;
 Split.stableGuttersComputeNewSizes = stableGuttersComputeNewSizes;
