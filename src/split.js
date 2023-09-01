@@ -6,6 +6,8 @@ import Gutter from './gutter.js';
 import moveGuttersComputeNewSizes from './move-gutters-compute-new-sizes.js';
 import stableGuttersComputeNewSizes from './stable-gutters-compute-new-sizes.js';
 
+import './style.css';
+
 export {
   moveGuttersComputeNewSizes,
   stableGuttersComputeNewSizes,
