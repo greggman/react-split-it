@@ -3250,7 +3250,8 @@
           }
 
           var style = {
-            flexBasis: "".concat(sizes[childNdx] * 100, "%")
+            flexBasis: "".concat(sizes[childNdx] * 100, "%"),
+            width: "".concat(sizes[childNdx] * 100, "%")
           };
           var className = classNames(paneClassName, _defineProperty({}, "".concat(paneClassName, "-dragging"), dragging));
           newChildren.push( /*#__PURE__*/React__default["default"].createElement("div", {

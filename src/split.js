@@ -266,6 +266,7 @@ export default class Split extends React.Component {
 
       const style = {
         flexBasis: `${sizes[childNdx] * 100}%`,
+        width: `${sizes[childNdx] * 100}%`,
       };
       const className = classNames(paneClassName, {[`${paneClassName}-dragging`]: dragging});
 
