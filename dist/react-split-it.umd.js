@@ -2956,7 +2956,7 @@
     }
   }
 
-  var css_248z = ".split-horizontal {\r\n\t\tdisplay: flex;\r\n\t\twidth: 100%;\r\n\t\theight: 100%;\r\n}\r\n\r\n.split-vertical {\r\n\t\tdisplay: flex;\r\n\t\tflex-direction: column;\r\n\t\theight: 100%;\r\n}\r\n\r\n.gutter {\r\n\t\tflex-shrink: 0;\r\n\t\tflex-grow: 0;\r\n\t\tbackground: gray;\r\n\t\tz-index: 1;\r\n}\r\n\r\n.gutter-horizontal {\r\n\t\tcursor: col-resize;\r\n}\r\n\r\n.gutter-vertical {\r\n\t\tcursor: row-resize;\r\n}\r\n\r\n.gutter > * {\r\n\tcursor: auto;\r\n}\r\n\r\n.pane {\r\n\t\tflex-shrink: 1;\r\n\t\tflex-grow: 1;\r\n\t\tposition: relative;\r\n\t\tbackground: lemonchiffon\r\n}\r\n\r\n.pane-dragging {\r\n\t\toverflow: hidden;\r\n}";
+  var css_248z = ".split-horizontal {\r\n  display: flex;\r\n  width: 100%;\r\n  height: 100%;\r\n}\r\n\r\n.split-vertical {\r\n  display: flex;\r\n  flex-direction: column;\r\n  height: 100%;\r\n}\r\n\r\n.gutter {\r\n  display: flex;\r\n  flex-shrink: 0;\r\n  flex-grow: 0;\r\n  z-index: 1;\r\n}\r\n\r\n.gutter-horizontal {\r\n  cursor: col-resize;\r\n}\r\n\r\n.gutter-vertical {\r\n  cursor: row-resize;\r\n}\r\n\r\n.gutter>* {\r\n  cursor: auto;\r\n}\r\n\r\n.pane {\r\n  flex-shrink: 1;\r\n  flex-grow: 1;\r\n  position: relative;\r\n}\r\n\r\n.pane-dragging {\r\n  overflow: hidden;\r\n}";
   styleInject(css_248z);
 
   function normalizeSizes(sizes) {
