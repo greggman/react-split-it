@@ -3049,9 +3049,10 @@ var Split = /*#__PURE__*/function (_React$Component) {
     };
 
     _this.handleMouseDownAndTouchStart = function (e) {
-      // Because we can now have custom gutter elements, we need to check if the
+      var gutterClassName = _this.props.gutterClassName; // Because we can now have custom gutter elements, we need to check if the
       // target is a gutter or not, as the user might have clicked on a child
-      if (!e.target.classList.contains('gutter')) return;
+
+      if (!e.target.classList.contains(gutterClassName)) return;
       stopMobileBrowserFromScrolling(e);
       var _this$props3 = _this.props,
           direction = _this$props3.direction,
@@ -3207,7 +3208,8 @@ var Split = /*#__PURE__*/function (_React$Component) {
         }
 
         var style = {
-          flexBasis: "".concat(sizes[childNdx] * 100, "%")
+          flexBasis: "".concat(sizes[childNdx] * 100, "%"),
+          width: "".concat(sizes[childNdx] * 100, "%")
         };
         var className = classNames(paneClassName, _defineProperty({}, "".concat(paneClassName, "-dragging"), dragging));
         newChildren.push( /*#__PURE__*/React__default["default"].createElement("div", {

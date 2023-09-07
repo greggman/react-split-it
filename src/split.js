@@ -133,9 +133,10 @@ export default class Split extends React.Component {
     setSizes(newSizes);
   };
   handleMouseDownAndTouchStart = (e) => {
+    const { gutterClassName } = this.props;
     // Because we can now have custom gutter elements, we need to check if the
     // target is a gutter or not, as the user might have clicked on a child
-		if (!e.target.classList.contains('gutter')) return;
+    if (!e.target.classList.contains(gutterClassName)) return;
 
     stopMobileBrowserFromScrolling(e);
     const {
@@ -264,6 +265,7 @@ export default class Split extends React.Component {
 
       const style = {
         flexBasis: `${sizes[childNdx] * 100}%`,
+        width: `${sizes[childNdx] * 100}%`,
       };
       const className = classNames(paneClassName, {[`${paneClassName}-dragging`]: dragging});
 
