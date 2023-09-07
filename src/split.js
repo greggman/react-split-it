@@ -6,8 +6,6 @@ import Gutter from './gutter.js';
 import moveGuttersComputeNewSizes from './move-gutters-compute-new-sizes.js';
 import stableGuttersComputeNewSizes from './stable-gutters-compute-new-sizes.js';
 
-import './style.css';
-
 export {
   moveGuttersComputeNewSizes,
   stableGuttersComputeNewSizes,
@@ -135,9 +133,10 @@ export default class Split extends React.Component {
     setSizes(newSizes);
   };
   handleMouseDownAndTouchStart = (e) => {
+    const { gutterClassName } = this.props;
     // Because we can now have custom gutter elements, we need to check if the
     // target is a gutter or not, as the user might have clicked on a child
-		if (!e.target.classList.contains('gutter')) return;
+    if (!e.target.classList.contains(gutterClassName)) return;
 
     stopMobileBrowserFromScrolling(e);
     const {
