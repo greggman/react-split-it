@@ -279,7 +279,7 @@ As it is if you have a split like this
 If you drag `A` to the right it will stop at `B`.
 
 You can change this by providing a function `computeNewSizesFn` as a prop. The function you pass in will be called to compute the sizes off all the panes
-when a spitter is dragged. It is passed an object
+when a splitter is dragged. It is passed an object
 with the following properties.
 
 * `startSizes`: [number]
@@ -290,9 +290,14 @@ with the following properties.
 
 * `prevPaneNdx`: integer
 
-  The index of the pane before the spitter being dragged.
+  The index of the pane before the splitter being dragged.
   In other words if you were dragging `B` in the diagram
   above this would be 1.
+
+* `gutter`: ReactComponent
+
+	The React elements rendered inside the gutter. This is
+	useful if you want to add a custom handle to the gutter.
 
 * `minSize`: number
 
@@ -321,6 +326,17 @@ with the following properties.
   is 100px then subtracting the space for the 2 gutters
   means `innerSizePX` will be 80.
 
+* `onDragStart`: function
+
+	A function that's called before the drag starts. This returns 
+	the sizes from where the drag started. This is useful if you
+	want to reset the sizes if the user drags too far.
+
+* `onDragEnd`: function
+
+	A function that's called once dragging ends. This is useful if you
+	want to set different sizes after dragging the gutter.
+
 Given this your function should return the new sizes
 of all the panes. As the simplest example
 
@@ -340,7 +356,7 @@ function badComputeNewSizes({
 ```
 
 You can see the code above, all it does is add `delta` to
-the pane before the spitter and subtracts it from the pane after
+the pane before the splitter and subtracts it from the pane after
 the splitter. [If you try it](https://greggman.github.io/react-split-it/#bad-custom-compute-sizes)
 you'll see it kind of works!
 

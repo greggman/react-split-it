@@ -23,13 +23,15 @@ export default class Gutter extends React.Component {
     elem.removeEventListener('touchstart', this.handleMouseDownAndTouchStart);
   }
   render() {
-    const {direction, dragging, current, style, gutterClassName} = this.props;
+    const {direction, dragging, current, style, gutter, gutterClassName} = this.props;
     return (
       <div
         ref={this.elementRef}
         className={`${gutterClassName} ${gutterClassName}-${direction} ${dragging && current ? `${gutterClassName}-dragging` : ''}`}
         style={style}
-      />
+      >
+        {gutter}
+      </div>
     );
   }
 }

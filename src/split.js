@@ -84,6 +84,10 @@ export default class Split extends React.Component {
     document.removeEventListener("touchmove", this.handleMouseAndTouchMove);
     document.removeEventListener("touchend", this.handleMouseUpAndTouchEnd);
     this.setState({dragging: false});
+
+		const { onSetSizes, sizes: propsSizes, onDragEnd } = this.props;
+		const sizes = onSetSizes ? propsSizes : this.state.sizes;
+		onDragEnd(sizes);
   };
   handleMouseAndTouchMove = (e) => {
     stopMobileBrowserFromScrolling(e);
@@ -129,10 +133,16 @@ export default class Split extends React.Component {
     setSizes(newSizes);
   };
   handleMouseDownAndTouchStart = (e) => {
+    const { gutterClassName } = this.props;
+    // Because we can now have custom gutter elements, we need to check if the
+    // target is a gutter or not, as the user might have clicked on a child
+    if (!e.target.classList.contains(gutterClassName)) return;
+
     stopMobileBrowserFromScrolling(e);
     const {
       direction,
       onSetSizes,
+			onDragStart,
       sizes: propsSizes,
     } = this.props;
     const {
@@ -153,6 +163,7 @@ export default class Split extends React.Component {
       prevPaneNdx,
       dragging: true,
     });
+		onDragStart(sizes);
   };
   recomputeSizes = () => {
     // here it's not entirely clear what to do. Maybe we need options
@@ -219,6 +230,7 @@ export default class Split extends React.Component {
       className: splitClassName,
       gutterClassName,
       paneClassName,
+      gutter
     } = this.props;
     const {
       dragging,
@@ -246,12 +258,14 @@ export default class Split extends React.Component {
             style={gutterStyle}
             gutterClassName={gutterClassName}
             onMouseDownAndTouchStart={this.handleMouseDownAndTouchStart}
+            gutter={gutter}
           />
         );
       }
 
       const style = {
         flexBasis: `${sizes[childNdx] * 100}%`,
+        width: `${sizes[childNdx] * 100}%`,
       };
       const className = classNames(paneClassName, {[`${paneClassName}-dragging`]: dragging});
 
@@ -293,6 +307,9 @@ Split.defaultProps = {
   minSize: 10,
   direction: 'horizontal',
   computeNewSizesFn: stableGuttersComputeNewSizes,
+  gutter: null,
+	onDragStart: () => {},
+	onDragEnd: () => {},
 };
 
 Split.propTypes = {
@@ -301,6 +318,7 @@ Split.propTypes = {
 
   minSize: PropTypes.number,
   gutterSize: PropTypes.number,
+  gutter: PropTypes.element,
 
   className: PropTypes.string,
   gutterClassName: PropTypes.string,
@@ -308,6 +326,8 @@ Split.propTypes = {
 
   onSetSizes: PropTypes.func,
   computeNewSizesFn: PropTypes.func,
+	onDragStart: PropTypes.func,
+	onDragEnd: PropTypes.func
 };
 
 Split.moveGuttersComputeNewSizes = moveGuttersComputeNewSizes;

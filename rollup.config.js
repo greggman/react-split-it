@@ -15,7 +15,7 @@ const commonOptions = {
       exclude: 'node_modules/**',
     }),
     resolve(),
-    commonjs(),
+    commonjs()
   ],
   watch: {
     include: 'src/**',
