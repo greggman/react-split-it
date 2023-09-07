@@ -2916,36 +2916,6 @@ function stableGuttersComputeNewSizes(_ref) {
   return newSizes;
 }
 
-function styleInject(css, ref) {
-  if ( ref === void 0 ) ref = {};
-  var insertAt = ref.insertAt;
-
-  if (!css || typeof document === 'undefined') { return; }
-
-  var head = document.head || document.getElementsByTagName('head')[0];
-  var style = document.createElement('style');
-  style.type = 'text/css';
-
-  if (insertAt === 'top') {
-    if (head.firstChild) {
-      head.insertBefore(style, head.firstChild);
-    } else {
-      head.appendChild(style);
-    }
-  } else {
-    head.appendChild(style);
-  }
-
-  if (style.styleSheet) {
-    style.styleSheet.cssText = css;
-  } else {
-    style.appendChild(document.createTextNode(css));
-  }
-}
-
-var css_248z = ".split-horizontal {\r\n  display: flex;\r\n  width: 100%;\r\n  height: 100%;\r\n}\r\n\r\n.split-vertical {\r\n  display: flex;\r\n  flex-direction: column;\r\n  height: 100%;\r\n}\r\n\r\n.gutter {\r\n  flex-shrink: 0;\r\n  flex-grow: 0;\r\n  z-index: 1;\r\n}\r\n\r\n.gutter-horizontal {\r\n  cursor: col-resize;\r\n}\r\n\r\n.gutter-vertical {\r\n  cursor: row-resize;\r\n}\r\n\r\n.gutter>* {\r\n  cursor: auto;\r\n}\r\n\r\n.pane {\r\n  flex-shrink: 1;\r\n  flex-grow: 1;\r\n  position: relative;\r\n}\r\n\r\n.pane-dragging {\r\n  overflow: hidden;\r\n}";
-styleInject(css_248z);
-
 function normalizeSizes(sizes) {
   var totalSize = sizes.reduce(function (sum, v) {
     return sum + v;
@@ -3079,9 +3049,10 @@ var Split = /*#__PURE__*/function (_React$Component) {
     };
 
     _this.handleMouseDownAndTouchStart = function (e) {
-      // Because we can now have custom gutter elements, we need to check if the
+      var gutterClassName = _this.props.gutterClassName; // Because we can now have custom gutter elements, we need to check if the
       // target is a gutter or not, as the user might have clicked on a child
-      if (!e.target.classList.contains('gutter')) return;
+
+      if (!e.target.classList.contains(gutterClassName)) return;
       stopMobileBrowserFromScrolling(e);
       var _this$props3 = _this.props,
           direction = _this$props3.direction,
